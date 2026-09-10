@@ -20,7 +20,7 @@
 .gal:before,.gal:after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #ffffff0b;border-radius:50%;pointer-events:none}.gal:before{width:56%;aspect-ratio:1}.gal:after{width:82%;aspect-ratio:1}.galLegend{position:absolute;left:14px;top:12px;color:#777386;font-size:11px;z-index:5}.core{width:112px;height:112px;box-shadow:0 0 30px #d9ff7222}.core b{font-size:21px}.wordNode{width:var(--nodeSize)!important;height:var(--nodeSize)!important;padding:3px!important;background:#1c1d2d;border:1px solid #ffffff1c;z-index:3;cursor:pointer}.wordNode b{font-size:clamp(7px,1.35vw,11px)!important;line-height:1.15;max-width:90%;margin:0!important;font-weight:700}.wordNode.band0{background:#292b38;border-color:#d9ff7270}.wordNode.band1{background:#232436;border-color:#b69dff55}.wordNode.band2{background:#1c1d2c;opacity:.82}.wordNode.band3{background:#131421;opacity:.48;border-color:#ffffff12}.wordNode.active{opacity:1!important;z-index:6;transform:translate(-50%,-50%) scale(1.18)!important}.line{display:block!important;height:1.5px}.line[hidden]{display:none!important}.line.active{height:3px!important}.simpleResult{padding:18px}.simpleResult h2{margin-bottom:16px}.commonBox{background:#0d0e18;border:1px solid #ffffff14;border-radius:18px;padding:16px}.commonBox>small{color:#aaa6b7}.commonTraits{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}.commonTrait{display:inline-flex;align-items:center;min-height:42px;padding:9px 13px;border-radius:999px;background:#d9ff72;color:#11140c;font-weight:900;font-size:15px}.traitOnly{margin-top:12px}.traitDiagram{display:grid;grid-template-columns:1fr;gap:0;background:#121321;border:1px solid #ffffff12;border-radius:14px;overflow:hidden}.traitVisual{min-height:86px;border-bottom:1px solid #ffffff10;padding:11px 14px;display:grid;grid-template-columns:minmax(105px,150px) 1fr;align-items:center;gap:12px}.traitVisual:last-child{border-bottom:0}.traitVisual>b{font-size:13px;color:#d9ff72}.traitGraphic{min-height:58px;display:flex;align-items:center;justify-content:center;gap:10px;color:#f7f5ef}.vDot{width:30px;height:30px;border:1px solid #ffffff2b;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px}.vDot.tiny{width:14px;height:14px;font-size:0;background:#fff}.vArrow{color:#b69dff;font-size:20px}.vShape{display:inline-block;border:1.5px solid #fff}.vClosed{width:8px;height:38px}.vOpen{width:42px;height:28px;border-radius:4px}.vCircle{display:inline-block;border:1.5px solid #fff;border-radius:50%}.vCircle.small{width:15px;height:15px}.vCircle.large{width:39px;height:39px}.wind{font-size:24px;letter-spacing:4px}.rain{font-size:14px;letter-spacing:5px;color:#9996aa}.vRoof{display:inline-block;width:50px;height:12px;border-top:3px solid #d9ff72;border-radius:50%}.vShield{width:38px;height:28px;border:2px solid #d9ff72;border-radius:50% 50% 45% 45%}.vBox{width:42px;height:42px;border:1.5px solid #d9ff72;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}.scatter,.gridDots{font-size:18px;line-height:1.1}.gridDots{letter-spacing:5px}.branchIcon{font-family:monospace;text-align:center;line-height:1.05}.battery{font-size:38px}.battery.low{opacity:.4}.battery.full{color:#d9ff72}.filterBar,.wallIcon{display:inline-block;width:3px;height:46px;background:#d9ff72;border-radius:4px}.vSquare{width:28px;height:28px;border:1.5px solid #fff}.vTriangle{width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:31px solid #d9ff72}.vLink{width:45px;height:2px;background:#b69dff}.rotateIcon,.orbitIcon{font-size:38px;color:#d9ff72}.noCommon{color:#918d9d;line-height:1.6}
 @media(max-width:620px){.gal{height:560px}.core{width:92px;height:92px}.core b{font-size:18px}.galLegend{font-size:9px}.wordNode b{font-size:7px!important}.traitVisual{grid-template-columns:92px 1fr;min-height:78px;padding:8px 10px}.commonTrait{font-size:13px;min-height:36px;padding:7px 11px}}
 </style></head><body><main><header>意味ワームホール <small>性質銀河 β</small></header><h1>似た性質の、<br><em>遠い言葉を探す。</em></h1><p class="lead">入力した言葉を中心に、<strong>性質が近い言葉ほど近く</strong>、遠い言葉ほど外側に並べます。</p><form class="box" id="f"><div class="row"><input class="q" id="q" value="扇子" placeholder="好きな言葉を入力"><button class="go">探す ↗</button></div><div class="ex" id="ex"></div><div class="st" id="st"></div><div class="sensebox" id="sensebox" hidden><b id="senseq">どっちの意味？</b><div class="senseopts" id="senseopts"></div></div></form><section class="prop compact" id="prop" hidden><small class="k">この言葉の性質</small><div class="prophead"><h3 id="ptitle"></h3><div class="pills" id="ptraits"></div></div></section><h2 class="src" id="srchead" hidden><span id="src">扇子</span> の言葉銀河</h2><div class="gal" id="gal" hidden><div class="galLegend">中心に近いほど、性質が似ている</div><div class="core"><span>START</span><b id="core">扇子</b><span id="mode">性質を確認中</span></div><i class="line" id="activeLine" hidden></i><div id="nodes"></div></div><section class="panel simpleResult" id="panel" hidden><small class="k">どこが似てる？</small><h2 id="title"></h2><div class="commonBox"><small>共通する性質</small><div class="commonTraits" id="commonTraits"></div></div><div class="diagram traitOnly" id="diagram"><div class="diagramHead"><b>性質を図で見る</b></div><div class="traitDiagram" id="traitDiagram"></div></div></section></main><script>
-const $=s=>document.querySelector(s),API='https://ja.wikipedia.org/w/api.php',P=[[50,13],[18,31],[82,31],[22,76],[78,76]],EX=['扇子','傘','帽子','銭湯','学校','駅','森','筆箱'];
+const $=s=>document.querySelector(s),API='https://ja.wikipedia.org/w/api.php',WIKT_API='https://ja.wiktionary.org/w/api.php',CONCEPT_API='https://api.conceptnet.io',P=[[50,13],[18,31],[82,31],[22,76],[78,76]],EX=['扇子','傘','帽子','銭湯','学校','駅','森','筆箱'];
 // 具体的な「ふるまい」。表示の主役はこちら。
 const T={
  simulate:{label:'頭の中で体験する',bridge:'「実際には今ここで起きていない場面を、頭の中で体験する」',re:/夢|想像|空想|映画|物語|シミュレーション/},
@@ -183,13 +183,18 @@ function bridgeText(a,b,t){
  return T[t]?.bridge||`「${T[t]?.label||t}」という動きがある`;
 }
 const GROUP={道具:'made',家具:'made',建築:'made',交通:'made',都市:'made',技術:'made',医療:'made',身体:'living',生物:'living',自然:'living',科学:'abstract',情報:'abstract',心理:'abstract',芸術:'abstract',楽器:'abstract',言語:'abstract',社会:'social',文化:'social',経済:'social',食:'social',宇宙:'cosmic',構造:'abstract',遊び:'social'};
-let S={w:'扇子',src:null,c:[],sel:null,senseByWord:{}};const CACHE='mwbeh7:';
+let S={w:'扇子',src:null,c:[],sel:null,senseByWord:{},dict:[]};const CACHE='mwbeh9:',DICT_CACHE='mwdict2:';
 const LOCAL_OVERRIDES={
  '帽子':{t:'帽子',d:'道具',tr:['wrap','cover','protect','portable'],ab:['境界']}
 };
 function normWord(w){return String(w||'').trim().replace(/^[「『]/,'').replace(/[」』]$/,'')}
-function api(p){let u=new URL(API);Object.entries({...p,format:'json',origin:'*'}).forEach(([k,v])=>u.searchParams.set(k,v));let c=new AbortController(),tm=setTimeout(()=>c.abort(),3500);return fetch(u,{signal:c.signal}).then(r=>{if(!r.ok)throw new Error('fetch');return r.json()}).finally(()=>clearTimeout(tm))}
+function fetchJSON(u,timeout=4200){let c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);return fetch(u,{signal:c.signal}).then(r=>{if(!r.ok)throw new Error('fetch');return r.json()}).finally(()=>clearTimeout(tm))}
+function apiAt(base,p){let u=new URL(base);Object.entries({...p,format:'json',origin:'*'}).forEach(([k,v])=>u.searchParams.set(k,v));return fetchJSON(u)}
+function api(p){return apiAt(API,p)}
+function wiktApi(p){return apiAt(WIKT_API,p)}
 function local(w){w=normWord(w);return cleanTraits(LOCAL_OVERRIDES[w]||WORDS.find(x=>x.t===w)||null)}
+function stripMarkup(s){return String(s||'').replace(/<[^>]+>/g,' ').replace(/\{\{[^{}]*\}\}/g,' ').replace(/\[\[([^\]|]+\|)?([^\]]+)\]\]/g,'$2').replace(/[=|{}'<>]/g,' ').replace(/\s+/g,' ').trim()}
+function validDictWord(w,src=''){w=normWord(w);if(!w||w===src||w.length>18||w.includes('\n')||w.includes('\r')||/[:#\/\\]/.test(w))return false;if(/^(Category|Template|Help|Wiktionary|付録|索引|カテゴリ)/i.test(w))return false;return /[一-龯ぁ-んァ-ヶA-Za-z0-9]/.test(w)}
 function infer(text){let tr=[];for(let[k,v]of Object.entries(T))if(v.re.test(text))tr.push(k);let ab=[];for(let[k,re]of Object.entries(K))if(re.test(text))ab.push(k);return{tr:[...new Set(tr)],ab:[...new Set(ab)]}}
 function surfaceHints(w,text=''){let z=w+' '+text,tr=[],ab=[],d='その他';let add=(...a)=>tr.push(...a);
  if(/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|袋|容器|引き出し|棚|ロッカー)/.test(z)){add('contain','organize');ab.push('保存')}
@@ -197,18 +202,79 @@ function surfaceHints(w,text=''){let z=w+' '+text,tr=[],ab=[],d='その他';let 
  if(/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|引き出し|扉|ドア|蓋|ふた|ファスナー|チャック)/.test(z))add('openclose');
  if(/(文房具|道具|器具|用品|筆箱|筆入れ)/.test(z))d='道具'; else if(/(食品|飲料|料理|食べ物)/.test(z))d='食'; else if(/(建物|施設|建築)/.test(z))d='建築'; else if(/(情報|データ|ソフトウェア|通信|言語)/.test(z))d='情報'; else if(/(臓器|身体|人体|生理)/.test(z))d='身体'; else if(/(生物|植物|動物)/.test(z))d='生物'; else if(/(自然|地形|気象|河川|海洋)/.test(z))d='自然'; else if(/(交通|鉄道|道路)/.test(z))d='交通'; else if(/(感情|心理)/.test(z))d='心理'; else if(/(社会|制度|公共|コミュニティ)/.test(z))d='社会'; else if(/(文化|儀礼|慣習)/.test(z))d='文化'; else if(/(宇宙|惑星|恒星|銀河)/.test(z))d='宇宙';
  return{tr:[...new Set(tr)],ab:[...new Set(ab)],d}}
+
+async function wiktionaryText(w){
+ let j=await wiktApi({action:'parse',page:w,prop:'wikitext',redirects:1}).catch(()=>null);
+ let raw=j?.parse?.wikitext?.['*']||j?.parse?.wikitext||'';
+ return stripMarkup(raw).slice(0,9000);
+}
+async function wiktionaryRelated(w){
+ const found=new Map();
+ const add=(name,score=1,snippet='')=>{name=normWord(name);if(!validDictWord(name,w))return;let prev=found.get(name);if(!prev||score>prev.score)found.set(name,{name,score,snippet:stripMarkup(snippet)})};
+ let [links,search]=await Promise.all([
+   wiktApi({action:'query',titles:w,prop:'links',plnamespace:0,pllimit:50,redirects:1}).catch(()=>null),
+   wiktApi({action:'query',list:'search',srsearch:w,srlimit:24,srnamespace:0,srprop:'snippet'}).catch(()=>null)
+ ]);
+ for(const pg of Object.values(links?.query?.pages||{}))for(const l of pg.links||[])add(l.title,2.2,'');
+ for(const r of search?.query?.search||[])add(r.title,1.7,r.snippet||'');
+ return [...found.values()].sort((a,b)=>b.score-a.score).slice(0,28);
+}
+async function conceptRelated(w){
+ const found=new Map(),slug=encodeURIComponent(normWord(w).replace(/\s+/g,'_'));
+ let j=await fetchJSON(`${CONCEPT_API}/c/ja/${slug}?offset=0&limit=70`,5000).catch(()=>null);
+ const relBonus={Synonym:4,SimilarTo:3.5,RelatedTo:3,IsA:2.7,PartOf:2.3,HasA:2.1,UsedFor:2.1,CapableOf:2.1,AtLocation:1.5,DerivedFrom:1.2,FormOf:1.2};
+ for(const e of j?.edges||[]){
+   const rel=String(e.rel?.label||'').replace(/^\/r\//,''),bonus=relBonus[rel]||.5,weight=Number(e.weight||1);
+   for(const n of [e.start,e.end]){
+     if(n?.language!=='ja')continue;
+     const name=normWord(n.label||'');if(!validDictWord(name,w))continue;
+     const score=bonus+Math.min(4,weight);
+     if(!found.has(name)||score>found.get(name).score)found.set(name,{name,score,snippet:rel});
+   }
+ }
+ return [...found.values()].sort((a,b)=>b.score-a.score).slice(0,30);
+}
+async function wikipediaDescriptions(names){
+ const map=new Map();
+ for(let i=0;i<names.length;i+=20){
+   const chunk=names.slice(i,i+20);
+   let j=await api({action:'query',titles:chunk.join('|'),prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null);
+   for(const pg of Object.values(j?.query?.pages||{}))if(!pg.missing)map.set(normWord(pg.title),String(pg.extract||''));
+ }
+ return map;
+}
+async function dictionaryPool(w){
+ w=normWord(w);
+ try{let c=JSON.parse(localStorage.getItem(DICT_CACHE+w)||'null');if(Array.isArray(c)&&c.length)return c.map(cleanTraits)}catch{}
+ const [cn,wk]=await Promise.all([conceptRelated(w),wiktionaryRelated(w)]);
+ const merged=new Map();
+ for(const item of [...cn,...wk]){
+   if(!validDictWord(item.name,w)||local(item.name))continue;
+   const prev=merged.get(item.name);if(!prev)merged.set(item.name,{...item});else{prev.score=Math.max(prev.score,item.score);prev.snippet=(prev.snippet+' '+item.snippet).trim()}
+ }
+ const picked=[...merged.values()].sort((a,b)=>b.score-a.score).slice(0,36),names=picked.map(x=>x.name);
+ const desc=await wikipediaDescriptions(names);
+ const out=[];
+ for(const item of picked){
+   const text=item.name+' '+(desc.get(item.name)||'')+' '+(item.snippet||''),inf=infer(text),h=surfaceHints(item.name,text);
+   let tr=[...new Set([...inf.tr,...h.tr])],ab=[...new Set([...inf.ab,...h.ab])];
+   out.push(cleanTraits({t:item.name,d:h.d,tr:tr.slice(0,8),ab:ab.slice(0,6),m:'辞書から追加',dictScore:item.score}));
+ }
+ try{localStorage.setItem(DICT_CACHE+w,JSON.stringify(out))}catch{}
+ return out;
+}
 async function source(w){w=normWord(w);let chosen=S.senseByWord[w],sense=SENSES[w]?.find(x=>x.id===chosen);if(sense)return{...cleanTraits(sense.src),m:'意味を選んだ'};let l=local(w);if(l)return{...l,m:'すぐ見つかった'};try{let c=JSON.parse(localStorage.getItem(CACHE+w)||'null');if(c)return{...c,m:'前に調べた'}}catch{};
- let p=null,j=await api({action:'query',titles:w,prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null);if(j){let ps=Object.values(j.query?.pages||{});p=ps.find(x=>!x.missing)}
+ let p=null,[j,wt]=await Promise.all([api({action:'query',titles:w,prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null),wiktionaryText(w).catch(()=>'')]);if(j){let ps=Object.values(j.query?.pages||{});p=ps.find(x=>!x.missing)}
  if(!p){j=await api({action:'query',generator:'search',gsrsearch:w,gsrlimit:4,prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null);let ps=j&&Object.values(j.query?.pages||{});p=ps?.find(x=>x.title===w)||ps?.[0]}
- let text=w+' '+(p?.title||'')+' '+(p?.extract||''),inf=infer(text),h=surfaceHints(w,text);inf.tr.push(...h.tr);inf.ab.push(...h.ab);
+ let text=w+' '+wt+' '+(p?.title||'')+' '+(p?.extract||''),inf=infer(text),h=surfaceHints(w,text);inf.tr.push(...h.tr);inf.ab.push(...h.ab);
  if(inf.tr.length<2){let fallback=[[/(風呂|温泉|銭湯)/,['wash','restore','repeat']],[/(飲料|ジュース|液体)/,['flow','mix','contain']],[/(駅|交通)/,['collect','distribute','branch']],[/(学校|教育)/,['collect','grow','repeat']],[/(扇子|うちわ)/,['airflow','cool','portable']],[/(傘)/,['openclose','cover','protect']],[/(箱|ケース|収納|文房具)/,['contain','organize','openclose']]];for(let[r,a]of fallback)if(r.test(text))inf.tr.push(...a)}
- let z=cleanTraits({t:w,d:h.d,tr:[...new Set(inf.tr)].slice(0,8),ab:[...new Set(inf.ab)].slice(0,6),m:p?'意味を確認した':'形・使い方から推定'});try{localStorage.setItem(CACHE+w,JSON.stringify(z))}catch{}return z}
+ let z=cleanTraits({t:w,d:h.d,tr:[...new Set(inf.tr)].slice(0,8),ab:[...new Set(inf.ab)].slice(0,6),m:wt?'辞書で意味を確認した':(p?'意味を確認した':'形・使い方から推定')});try{localStorage.setItem(CACHE+w,JSON.stringify(z))}catch{}return z}
 function dgroup(d){return GROUP[d]||d||'other'}
 function domainDistance(a,b){if(a===b)return 0;let ga=dgroup(a),gb=dgroup(b);if(ga===gb)return 1;if(ga==='cosmic'||gb==='cosmic')return 3;return 2}
 const TRAIT_WEIGHT={simulate:14,aspire:14,expandcompress:14,organize:13,openclose:12,store:12,release:12,absorb:12,reflect:12,amplify:12,dampen:12,sync:12,sort:12,switch:12,trigger:12,balance:12,pulse:12,rotate:12,orbit:12,wrap:12,peel:12,hatch:12,pump:12,migrate:12,copy:12,erase:12,translate:12,substitute:12,focus:12,frame:12,broadcast:12,recycle:12,airflow:11,wash:11,restore:11,branch:11,filter:11,grow:11,flow:10,mix:10,collect:10,distribute:10,connect:10,record:10,contain:9,portable:9,protect:9,cover:8,repeat:8,regulate:8,exchange:8,transform:8,separate:5,signal:7,deviate:9,followrule:7};
 function bridgeQuality(shared){return shared.reduce((n,t)=>n+(TRAIT_WEIGHT[t]||7),0)}
-function candidates(src){
- const pool=[...WORDS.map(cleanTraits),...Object.values(LOCAL_OVERRIDES).map(cleanTraits)];
+function candidates(src,extra=[]){
+ const pool=[...WORDS.map(cleanTraits),...Object.values(LOCAL_OVERRIDES).map(cleanTraits),...extra.map(cleanTraits)];
  const seen=new Set();
  return pool.filter(x=>x&&x.t!==src.t&&!seen.has(x.t)&&seen.add(x.t)).map(x=>{
    const shared=x.tr.filter(k=>src.tr.includes(k));
@@ -217,7 +283,7 @@ function candidates(src){
    const jaccard=shared.length/union;
    const sim=Math.min(1,coverage*.68+jaccard*.32);
    const abstract=x.ab.filter(k=>src.ab.includes(k));
-   return {...x,shared,abstract,sim,score:sim*100+shared.length*10};
+   return {...x,shared,abstract,sim,score:sim*100+shared.length*10+(x.dictScore||0)*.15};
  }).sort((a,b)=>b.score-a.score||a.t.localeCompare(b.t,'ja'));
 }
 function bestTrait(x){let pref=['simulate','aspire','expandcompress','organize','openclose','store','release','absorb','reflect','amplify','dampen','sync','sort','switch','trigger','balance','pulse','rotate','orbit','wrap','peel','hatch','pump','migrate','copy','erase','translate','substitute','focus','frame','broadcast','recycle','wash','restore','airflow','cool','portable','collect','distribute','branch','flow','mix','filter','connect','record','grow','cover','protect','transform','repeat','contain','regulate','separate','deviate','followrule','signal','exchange'];return pref.find(t=>x.shared.includes(t))||x.shared[0]}
@@ -346,6 +412,7 @@ function open(x){S.sel=x;const sw=S.src?.t||S.w,shared=x.shared||[];$('#panel').
 function renderSourceProps(){let src=S.src,box=$('#prop');if(!src||!box)return;box.hidden=false;$('#ptitle').textContent=displayWord(src.t||S.w);$('#ptraits').innerHTML=(src.tr||[]).slice(0,6).map(t=>`<span class="pill">${dEsc(T[t]?.label||t)}</span>`).join('')}
 function hideSenses(){let box=$('#sensebox');if(box)box.hidden=true}
 function askSense(w){let senses=SENSES[w];if(!senses||S.senseByWord[w])return false;let box=$('#sensebox'),opts=$('#senseopts');$('#senseq').textContent=`「${w}」はどっちの意味？`;opts.innerHTML='';senses.forEach(se=>{let b=document.createElement('button');b.type='button';b.className='sensebtn';b.innerHTML=`${dEsc(se.label)}<small>${dEsc(se.note||'')}</small>`;b.onclick=()=>{S.senseByWord[w]=se.id;hideSenses();run(w,true)};opts.appendChild(b)});box.hidden=false;$('#st').textContent='意味を1つ選ぶと、変なつながりを減らせるで。';$('#panel').hidden=true;$('#prop').hidden=true;$('#srchead').hidden=true;$('#gal').hidden=true;return true}
-async function run(w,skipSense=false){w=normWord(w);if(!w)return;S.w=w;$('#src').textContent=$('#core').textContent=w;$('#mode').textContent='性質を確認中';$('#panel').hidden=true;$('#prop').hidden=true;$('#srchead').hidden=true;$('#gal').hidden=true;if(!skipSense&&askSense(w))return;hideSenses();$('#st').textContent=`「${w}」の性質を見てるで…`;let src=await source(w);S.src=src;$('#mode').textContent=`性質 ${src.tr.length}つ`;renderSourceProps();S.c=candidates(src);$('#srchead').hidden=false;$('#gal').hidden=false;render();$('#st').textContent=`${S.c.length}語を配置したで。中心に近いほど性質が似てる。`}
+async function run(w,skipSense=false){w=normWord(w);if(!w)return;S.w=w;S.dict=[];$('#src').textContent=$('#core').textContent=w;$('#mode').textContent='性質を確認中';$('#panel').hidden=true;$('#prop').hidden=true;$('#srchead').hidden=true;$('#gal').hidden=true;if(!skipSense&&askSense(w))return;hideSenses();$('#st').textContent=`「${w}」を辞書で確認してるで…`;let src=await source(w);S.src=src;$('#mode').textContent=`性質 ${src.tr.length}つ`;renderSourceProps();S.c=candidates(src);$('#srchead').hidden=false;$('#gal').hidden=false;render();$('#st').textContent=`まず${S.c.length}語を配置。辞書から言葉を広げてるで…`;
+ let dict=await dictionaryPool(w).catch(()=>[]);if(S.w!==w)return;S.dict=dict;S.c=candidates(src,dict);render();const added=S.c.filter(x=>x.m==='辞書から追加').length;$('#st').textContent=`${S.c.length}語を配置したで（辞書から +${added}語）。中心に近いほど性質が似てる。`}
 $('#f').onsubmit=e=>{e.preventDefault();run($('#q').value)};$('#ex').innerHTML=EX.map(x=>`<button type="button">#${x}</button>`).join('');[...$('#ex').children].forEach((b,i)=>b.onclick=()=>{$('#q').value=EX[i];run(EX[i])});run('扇子');
 </script></body></html>
