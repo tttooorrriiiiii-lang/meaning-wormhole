@@ -1,3 +1,1066 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>意味ワームホール｜関係でたどる辞書</title>
+  <style>
+
+*{box-sizing:border-box}
+:root{
+  --bg:#0b0c16;--panel:#151625;--panel2:#0e0f19;--text:#f7f5ef;--muted:#aaa6b7;
+  --line:#ffffff18;--lime:#d9ff72;--purple:#b69dff;
+}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+main{max-width:900px;margin:auto;padding:18px 14px 80px}
+header{font-weight:900;letter-spacing:.01em}
+h1{font-size:clamp(34px,8vw,64px);line-height:1.03;letter-spacing:-.045em;margin:36px 0 12px}
+h1 em{font-style:normal;color:var(--purple)}
+.lead{color:#c0bccb;line-height:1.7;max-width:690px}
+.search-card,.dictionary-card,.galaxy-card,.compare-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:14px;margin-top:20px
+}
+.search-row{display:flex;gap:8px}
+.search-input{flex:1;min-width:0;background:var(--panel2);border:1px solid #ffffff25;border-radius:13px;color:#fff;padding:14px 15px;font-size:17px}
+.search-button{border:0;border-radius:13px;background:var(--lime);color:#12150d;padding:12px 17px;font-weight:900}
+.examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.examples button{border:0;background:transparent;color:#928e9e;padding:4px 2px}
+.status{font-size:12px;color:#bcb7c8;min-height:22px;padding-top:9px}
+
+.section-kicker{font-size:11px;color:#8f8a9c;letter-spacing:.08em;font-weight:900}
+.word-line{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.word-line h2{font-size:30px;margin:5px 0 0}
+.domain{font-size:11px;color:var(--lime);border:1px solid #d9ff7235;border-radius:999px;padding:4px 8px}
+.definition{font-size:15px;line-height:1.8;margin:12px 0;color:#dedbe4}
+.source-badges,.trait-list{display:flex;gap:6px;flex-wrap:wrap}
+.badge,.trait{border:1px solid #ffffff18;border-radius:999px;padding:6px 9px;font-size:11px}
+.badge{color:#9691a2}
+.trait{background:#11121d;color:#f4f1f8}
+.block-title{font-size:13px;margin:17px 0 8px;color:#d8d4df}
+
+.relation-groups{display:grid;gap:10px;margin-top:16px}
+.relation-group{display:grid;grid-template-columns:88px 1fr;gap:10px;align-items:start;border-top:1px solid #ffffff10;padding-top:10px}
+.relation-label{font-size:11px;color:#8f8a9c;padding-top:6px;font-weight:800}
+.relation-words{display:flex;gap:6px;flex-wrap:wrap}
+.relation-word{border:1px solid #ffffff18;background:#0f101a;color:#eeeaf4;border-radius:999px;padding:7px 10px;font-size:12px}
+.relation-word:hover{border-color:#d9ff7270}
+.relation-word small{color:#817b8e;margin-left:5px}
+
+.galaxy-head{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-bottom:10px}
+.galaxy-head h2{margin:4px 0;font-size:27px}
+.galaxy-head p{margin:0;color:#908b9b;font-size:11px;max-width:280px;text-align:right}
+.galaxy{height:560px;position:relative;border:1px solid #ffffff13;border-radius:26px;overflow:hidden;background:
+ radial-gradient(circle at center,#b69dff18 0,transparent 30%),
+ radial-gradient(circle at center,transparent 0 31%,#ffffff08 31.2% 31.5%,transparent 31.8%),
+ radial-gradient(circle at center,transparent 0 49%,#ffffff07 49.2% 49.5%,transparent 49.8%)}
+.galaxy-core,.galaxy-node{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:999px;display:flex;align-items:center;justify-content:center;text-align:center;z-index:3}
+.galaxy-core{width:118px;height:118px;background:var(--lime);color:#11140c;padding:10px}
+.galaxy-core strong{font-size:20px;overflow-wrap:anywhere}
+.galaxy-node{width:var(--node-size);height:var(--node-size);min-width:28px;min-height:28px;border:1px solid #ffffff1d;background:#1e1f32;color:#f8f6fb;padding:5px;transition:.18s transform,.18s border-color,.18s box-shadow,.18s background}
+.galaxy-node span{font-size:clamp(8px,1.6vw,12px);max-width:88px;overflow-wrap:anywhere}
+.galaxy-node.active{transform:translate(-50%,-50%) scale(1.08);border-color:var(--lime);background:#282a3d;box-shadow:0 0 0 1px #d9ff7260,0 0 18px #d9ff7248}
+.active-line{position:absolute;height:4px;background:var(--lime);transform-origin:0 0;z-index:2;box-shadow:0 0 5px #d9ff72cc,0 0 15px #d9ff7280,0 0 28px #d9ff723d}
+.empty-galaxy{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);color:#8d8998;font-size:12px;width:80%;text-align:center}
+
+.compare-card[hidden],.sense-card[hidden]{display:none}
+.compare-card{border-color:#d9ff7250;box-shadow:0 0 25px #d9ff7212}
+.compare-card h2{font-size:28px;margin:5px 0 14px}
+.common-label{font-size:11px;color:#8d8998;font-weight:800;letter-spacing:.05em}
+.common-traits{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.common-trait{font-size:19px;font-weight:900;background:var(--lime);color:#12150c;border-radius:999px;padding:9px 13px}
+.trait-visual{margin-top:14px;border:1px solid #ffffff13;background:#0f101a;border-radius:18px;padding:12px}
+.trait-visual-row{display:grid;grid-template-columns:minmax(72px,1fr) auto minmax(72px,1fr);gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #ffffff0d}
+.trait-visual-row:last-child{border-bottom:0}
+.visual-box{border:1px solid #ffffff20;border-radius:13px;min-height:52px;padding:9px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px}
+.visual-arrow{text-align:center;color:var(--purple);font-size:20px}
+.visual-name{grid-column:1/-1;text-align:center;color:var(--lime);font-size:11px;font-weight:800;margin-top:-2px}
+
+.sense-card{background:#10111b;border:1px solid #ffffff18;border-radius:16px;padding:12px;margin-top:12px}
+.sense-card b{display:block;margin-bottom:8px}
+.sense-options{display:grid;gap:7px}
+.sense-option{border:1px solid #ffffff20;background:#171827;color:#fff;text-align:left;border-radius:12px;padding:11px}
+.sense-option small{display:block;color:#9691a2;margin-top:3px}
+
+.loading-dot::after{content:'…';animation:dots 1.1s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%,100%{content:'...'}}
+
+@media(max-width:650px){
+  main{padding-left:12px;padding-right:12px}
+  .search-row{display:block}.search-button{width:100%;margin-top:7px}
+  .relation-group{grid-template-columns:1fr;gap:4px}
+  .galaxy{height:510px}
+  .galaxy-head{display:block}.galaxy-head p{text-align:left;margin-top:4px}
+  .common-trait{font-size:16px}
+}
+
+</style>
+</head>
+<body>
+<main>
+  <header>意味ワームホール</header>
+
+  <h1>言葉を、<em>関係</em>でたどる。</h1>
+  <p class="lead">
+    意味だけじゃなく、用途・性質・動き・部分・反対まで。
+    辞書から関係を拾って、同じ性質を持つ言葉だけ銀河に並べます。
+  </p>
+
+  <section class="search-card">
+    <form id="searchForm" class="search-row">
+      <input id="query" class="search-input" autocomplete="off" enterkeyhint="search" placeholder="言葉を入力">
+      <button class="search-button" type="submit">調べる</button>
+    </form>
+    <div id="examples" class="examples"></div>
+    <div id="status" class="status" aria-live="polite"></div>
+
+    <div id="senseCard" class="sense-card" hidden>
+      <b id="senseTitle"></b>
+      <div id="senseOptions" class="sense-options"></div>
+    </div>
+  </section>
+
+  <section id="dictionaryCard" class="dictionary-card" hidden>
+    <div class="section-kicker">DICTIONARY</div>
+    <div class="word-line">
+      <h2 id="dictWord"></h2>
+      <span id="dictDomain" class="domain"></span>
+    </div>
+    <p id="definition" class="definition"></p>
+    <div id="sourceBadges" class="source-badges"></div>
+
+    <div class="block-title">この言葉の性質</div>
+    <div id="traits" class="trait-list"></div>
+
+    <div class="block-title">関係をたどる</div>
+    <div id="relationGroups" class="relation-groups"></div>
+  </section>
+
+  <section id="galaxyCard" class="galaxy-card" hidden>
+    <div class="galaxy-head">
+      <div>
+        <div class="section-kicker">WORD GALAXY</div>
+        <h2>同じ性質の言葉</h2>
+      </div>
+      <p><span id="galaxyCount"></span> · 性質が近いほど中央に近い</p>
+    </div>
+    <div id="galaxy" class="galaxy">
+      <div id="activeLine" class="active-line" hidden></div>
+      <div class="galaxy-core"><strong>—</strong></div>
+      <div id="nodesLayer"></div>
+      <div id="emptyGalaxy" class="empty-galaxy" hidden>
+        共通する性質がある言葉だけ表示します。
+      </div>
+    </div>
+  </section>
+
+  <section id="compareCard" class="compare-card" hidden>
+    <div class="section-kicker">どこが似てる？</div>
+    <h2 id="compareTitle"></h2>
+    <div class="common-label">共通する性質</div>
+    <div id="commonTraits" class="common-traits"></div>
+    <div id="traitVisual" class="trait-visual"></div>
+  </section>
+</main>
+
+
+
+
+
+
+<script>
+// Meaning Wormhole dictionary data
+// 179 curated seed words + trait patterns.
+// This file is intentionally local so the app still works when external dictionaries are slow.
+
+const TRAITS={
+ simulate:{label:'頭の中で体験する',bridge:'「実際には今ここで起きていない場面を、頭の中で体験する」',re:/夢|想像|空想|映画|物語|シミュレーション/},
+ aspire:{label:'未来を目指す',bridge:'「まだ実現していない未来の状態を思い描き、そこへ向かう」',re:/目標|願望|将来|夢|計画|理想/},
+ openclose:{label:'開く・閉じる',bridge:'「必要なときに開いて、中のものを使い、終わったら閉じる」',re:/開閉|開く|閉じる|蓋|ふた|ファスナー|チャック|折りたた|折り畳|展開|収束|扇子|傘|蛇腹|筆箱|筆入れ|財布|鞄|かばん|ケース|箱/},
+ portable:{label:'持ち運ぶ',bridge:'「使う場所まで持ち運び、必要なときだけ取り出す」',re:/携帯|持ち運|持参|可搬|ポータブル|手持ち|扇子|傘|カメラ|筆箱|筆入れ|財布|鞄|かばん|バッグ|ポーチ|ケース/},
+ cover:{label:'覆う',bridge:'「広げた面で、何かを覆ったり遮ったりする」',re:/覆う|覆い|遮る|遮断|日除け|日よけ|雨除け|傘|屋根|皮膚/},
+ protect:{label:'守る',bridge:'「外から来るものを弱めて、中を守る」',re:/保護|守る|防ぐ|防止|防御|遮蔽|傘|皮膚|城壁|ファイアウォール/},
+ airflow:{label:'風を動かす',bridge:'「空気の流れをつくって、まわりの感じ方を変える」',re:/送風|風を起こ|風を送|あおぐ|扇ぐ|換気|扇子|扇風機/},
+ cool:{label:'冷やす',bridge:'「熱を減らして、暑さをやわらげる」',re:/冷却|冷やす|涼|暑さ|扇子|冷蔵庫|エアコン/},
+ wash:{label:'洗って落とす',bridge:'「いらないものや汚れを落として、整った状態に戻す」',re:/洗浄|洗う|汚れ|清潔|入浴|風呂|銭湯|洗濯機/},
+ restore:{label:'回復する',bridge:'「減ったものを補って、もう一度使える状態に戻す」',re:/回復|疲労|休息|癒|再生|充電|休養|睡眠|銭湯|病院/},
+ flow:{label:'流れる',bridge:'「中身が止まらず、場所から場所へ移っていく」',re:/流れる|流動|液体|血液|水分|河川|ジュース|インク|香水/},
+ contain:{label:'中に入れる',bridge:'「中身をひとつの範囲に入れて、外へ散らばらないようにする」',re:/容器|収納|入れる|収容|格納|しまう|収める|保存|冷蔵庫|ボトル|箱|ケース|袋|筆箱|筆入れ|財布|鞄|かばん|ポーチ/},
+ organize:{label:'整理してしまう',bridge:'「いくつかのものをまとめて、必要なときに取り出しやすくする」',re:/整理|収納|分類|仕分け|しまう|収める|格納|筆箱|筆入れ|工具箱|引き出し|本棚|財布|データベース|図書館/},
+ mix:{label:'混ぜる',bridge:'「違うものを混ぜて、ひとつの新しい状態にする」',re:/混合|混ぜる|ブレンド|配合|料理|発酵|ジュース|香水|インク/},
+ transform:{label:'形・状態を変える',bridge:'「使う前と後で、形や状態がはっきり変わる」',re:/変形|変化|変換|折りたた|展開|脱皮|発酵|料理|扇子|傘/},
+ collect:{label:'集める',bridge:'「ばらばらのものを、いったん同じ場所へ集める」',re:/集める|集合|集積|集団|集まる|駅|港|学校|広場|図書館/},
+ distribute:{label:'送り分ける',bridge:'「集まったものを、行き先ごとに分けて送り出す」',re:/分配|配布|配送|送り出|分岐|駅|港|郵便局|交差点/},
+ connect:{label:'つなぐ',bridge:'「離れた点どうしをつないで、行き来できるようにする」',re:/接続|つなぐ|ネットワーク|通信|API|駅|インターネット|SNS/},
+ branch:{label:'枝分かれする',bridge:'「一つの流れを、複数の行き先へ分ける」',re:/分岐|枝分かれ|経路|交差点|駅|血管|川/},
+ filter:{label:'通す・止めるを選ぶ',bridge:'「全部は通さず、条件に合うものだけを通す」',re:/ろ過|濾過|フィルタ|選別|検査|改札|皮膚|ファイアウォール/},
+ repeat:{label:'繰り返す',bridge:'「同じ流れを何度も繰り返して、状態を保ったり変えたりする」',re:/反復|繰り返|周期|毎日|習慣|祭り|儀式|洗濯機|睡眠/},
+ record:{label:'残してあとで使う',bridge:'「その瞬間の情報を残し、あとから見返せるようにする」',re:/記録|保存|撮影|写真|カメラ|アーカイブ|図書館|記憶/},
+ regulate:{label:'動きを調整する',bridge:'「動きすぎたり足りなかったりしないよう、ちょうどよく調整する」',re:/制御|調整|管理|規制|温度調節|交通整理|交差点|冷蔵庫/},
+ exchange:{label:'受け渡す',bridge:'「片方からもう片方へ、何かを受け渡す」',re:/交換|取引|受け渡|販売|共有|銀行|市場|コンビニ|API/},
+ grow:{label:'育つ',bridge:'「時間と環境の影響を受けながら、少しずつ変わっていく」',re:/成長|発達|育つ|教育|学習|進化|学校|森|温室|種/},
+ separate:{label:'内と外を分ける',bridge:'「境目をつくって、内側と外側を分ける」',re:/境界|膜|内外|壁|皮膚|城壁|家|容器/},
+ deviate:{label:'決まりから外れる',bridge:'「期待されているやり方や決まりから外れる」',re:/失礼|無礼|違反|逸脱|エラー|タブー|反則/},
+ followrule:{label:'決まりに沿う',bridge:'「みんなが共有している決まりに沿って動く」',re:/礼儀|マナー|規則|ルール|プロトコル|校則|ドレスコード|敬語/},
+ signal:{label:'意味を伝える',bridge:'「形や言葉そのものより、そこに込めた合図を相手へ伝える」',re:/挨拶|敬語|サイン|信号|合図|礼儀|失礼/},
+ expandcompress:{label:'広がる・縮む',bridge:'「広がったり縮んだりしながら働く」',re:/広が|縮む|収縮|膨張|伸縮|扇子|傘|肺|蛇腹|アコーディオン|翼/},
+ store:{label:'ためておく',bridge:'「今すぐ使わないものを、中にためてあとで使う」',re:/蓄積|貯蔵|備蓄|ためる|貯める|電池|ダム|種|脂肪|倉庫|記憶/},
+ release:{label:'ためたものを出す',bridge:'「中にためたものを、必要なときに外へ出す」',re:/放出|排出|解放|噴出|発射|ダム|電池|汗腺|火山|スプレー/},
+ absorb:{label:'吸いこむ',bridge:'「外にあるものを取りこんで、自分の中へ入れる」',re:/吸収|吸い込|吸着|スポンジ|根|肺|腸|掃除機|土壌/},
+ reflect:{label:'はね返す',bridge:'「受けたものを、そのまま通さず別の方向へ返す」',re:/反射|反響|跳ね返|鏡|水面|壁|レーダー|エコー/},
+ amplify:{label:'大きくする',bridge:'「小さな入力を、もっと大きな動きや信号にして返す」',re:/増幅|拡大|強める|アンプ|拡声器|レンズ|SNS|てこ/},
+ dampen:{label:'弱める',bridge:'「強すぎるものを受け止めて、力を小さくする」',re:/減衰|緩衝|吸音|クッション|ダンパー|森|防波堤|耳栓/},
+ sync:{label:'タイミングをそろえる',bridge:'「別々に動くもののタイミングを合わせる」',re:/同期|同調|リズム|時計|指揮者|信号機|心拍|メトロノーム/},
+ stack:{label:'重ねる',bridge:'「同じ場所に順番に重ねて、まとまりをつくる」',re:/積層|重ねる|層|地層|本棚|スタック|サンドイッチ|年輪/},
+ sort:{label:'分けて並べる',bridge:'「違いを見つけて、種類ごとに分けたり並べたりする」',re:/分類|選別|ソート|仕分け|図書館|郵便局|税関|ふるい/},
+ switch:{label:'切り替える',bridge:'「条件に合わせて、動き方や行き先を切り替える」',re:/切替|切り替|スイッチ|信号機|ポイント|神経|分岐器|ルーター/},
+ trigger:{label:'きっかけで動き出す',bridge:'「ある合図をきっかけに、次の動きが始まる」',re:/引き金|トリガー|反応|きっかけ|ドミノ|センサー|発芽|アラーム/},
+ lock:{label:'動かないよう止める',bridge:'「勝手に動いたり開いたりしないよう固定する」',re:/固定|ロック|施錠|鍵|アンカー|ブレーキ|クリップ|関節/},
+ balance:{label:'つり合いをとる',bridge:'「片方に偏りすぎないよう、ちょうどいい位置へ戻す」',re:/均衡|バランス|平衡|天秤|シーソー|自律神経|市場|サーモスタット/},
+ pulse:{label:'一定の間隔で動く',bridge:'「止まらず、一定の間隔で動きを繰り返す」',re:/脈動|拍動|パルス|心臓|信号|波|点滅|メトロノーム/},
+ rotate:{label:'回り続ける',bridge:'「中心のまわりを回りながら働く」',re:/回転|旋回|車輪|扇風機|歯車|惑星|洗濯機|渦/},
+ orbit:{label:'中心のまわりを巡る',bridge:'「中心から離れすぎず、まわりを巡り続ける」',re:/公転|軌道|周回|惑星|衛星|電子|通勤|ルーティン/},
+ support:{label:'下から支える',bridge:'「自分が土台になって、別のものが動いたり立ったりできるようにする」',re:/支持|支える|土台|柱|骨格|インフラ|根|サーバー/},
+ wrap:{label:'包む',bridge:'「外側から包んで、中身をひとまとまりにする」',re:/包装|包む|ラップ|皮|殻|封筒|布団|雲/},
+ peel:{label:'外側をはがす',bridge:'「外側の層を取り除いて、中にあるものを出す」',re:/剥離|はがす|皮むき|脱皮|開封|発掘|玉ねぎ|殻/},
+ hatch:{label:'中から出てくる',bridge:'「閉じた中で準備して、ある時点で外へ出る」',re:/孵化|発芽|誕生|卵|種|繭|ポップアップ|展開/},
+ pump:{label:'押し出して送る',bridge:'「力を加えて、中のものを別の場所へ押し出す」',re:/ポンプ|圧送|心臓|噴水|注射器|肺|水道|コンプレッサー/},
+ migrate:{label:'場所を移す',bridge:'「環境や条件に合わせて、まとまって別の場所へ移る」',re:/移動|移住|渡り|迁移|引っ越し|渡り鳥|データ移行|遊牧/},
+ copy:{label:'同じものを増やす',bridge:'「元の形や情報を保ちながら、もう一つ作る」',re:/複製|コピー|増殖|DNA|印刷|クローン|バックアップ|細胞分裂/},
+ erase:{label:'跡を消す',bridge:'「残っているものを取り除いて、前の状態を見えなくする」',re:/消去|削除|消す|消しゴム|洗濯|忘却|リセット|漂白/},
+ translate:{label:'別の形に言い換える',bridge:'「中身を保ちながら、別の表し方へ置き換える」',re:/翻訳|変換|通訳|エンコード|字幕|地図|楽譜|比喩/},
+ substitute:{label:'代わりになる',bridge:'「本来そこにあるものの役目を、別のもので引き受ける」',re:/代替|代用|代理|置換|義手|代用品|プロキシ|影武者/},
+ focus:{label:'一点に集める',bridge:'「ばらけたものを、一つの場所や目的へ集中させる」',re:/焦点|集中|集光|レンズ|会議|虫眼鏡|アンテナ|視線/},
+ frame:{label:'見える範囲を決める',bridge:'「どこからどこまでを見るかを決めて、意味を切り取る」',re:/枠|フレーム|構図|窓|カメラ|額縁|編集|国境/},
+ broadcast:{label:'一度に広く届ける',bridge:'「一つの場所から、たくさんの相手へ同時に届ける」',re:/放送|配信|拡散|SNS|ラジオ|スピーカー|花粉|種子散布/},
+ recycle:{label:'使ったものを戻して使う',bridge:'「一度使ったものを、そのまま捨てず別の形でまた使う」',re:/再利用|循環|リサイクル|堆肥|血液循環|古着|再生紙|水循環/}
+};
+// 抽象タグは補助。具体的なふるまいの後で見る。
+
+if (!TRAITS.rule) {
+  TRAITS.rule = {label:'決まりがある', bridge:'「どう動くかを決めるルールがある」', re:/ルール|規則|規範|決まり|ゲーム|手順|制度/};
+}
+
+const TRAIT_WEIGHTS={simulate:14,aspire:14,expandcompress:14,organize:13,openclose:12,store:12,release:12,absorb:12,reflect:12,amplify:12,dampen:12,sync:12,sort:12,switch:12,trigger:12,balance:12,pulse:12,rotate:12,orbit:12,wrap:12,peel:12,hatch:12,pump:12,migrate:12,copy:12,erase:12,translate:12,substitute:12,focus:12,frame:12,broadcast:12,recycle:12,airflow:11,wash:11,restore:11,branch:11,filter:11,grow:11,flow:10,mix:10,collect:10,distribute:10,connect:10,record:10,contain:9,portable:9,protect:9,cover:8,repeat:8,regulate:8,exchange:8,transform:8,separate:5,signal:7,deviate:9,followrule:7};
+
+const SEED_WORDS = [{"t":"扇子","d":"道具","tr":["expandcompress","openclose","portable","airflow","cool","transform"],"ab":["変化","境界"]},{"t":"傘","d":"道具","tr":["expandcompress","openclose","portable","cover","protect","transform"],"ab":["変化","境界"]},{"t":"扇風機","d":"道具","tr":["airflow","cool","regulate"],"ab":["変化"]},{"t":"冷蔵庫","d":"道具","tr":["cool","contain","organize","regulate","record"],"ab":["保存","境界"]},{"t":"財布","d":"道具","tr":["contain","organize","portable","openclose"],"ab":["保存","境界"]},{"t":"工具箱","d":"道具","tr":["contain","organize","portable","openclose"],"ab":["保存","境界"]},{"t":"引き出し","d":"家具","tr":["contain","organize","openclose"],"ab":["保存","境界"]},{"t":"本棚","d":"家具","tr":["contain","organize","record"],"ab":["保存","集合"]},{"t":"データベース","d":"情報","tr":["contain","organize","record","filter"],"ab":["保存","集合"]},{"t":"洗濯機","d":"道具","tr":["wash","repeat","regulate","transform"],"ab":["浄化","変化"]},{"t":"充電器","d":"技術","tr":["restore","exchange","regulate"],"ab":["回復","交換"]},{"t":"皮膚","d":"身体","tr":["cover","protect","filter","separate"],"ab":["境界","交換"]},{"t":"城壁","d":"建築","tr":["protect","separate","regulate"],"ab":["境界","規範"]},{"t":"家","d":"建築","tr":["cover","protect","contain","separate"],"ab":["境界","集合"]},{"t":"駅","d":"交通","tr":["collect","distribute","connect","branch"],"ab":["中継","集合"]},{"t":"港","d":"交通","tr":["collect","distribute","exchange","flow"],"ab":["中継","交換"]},{"t":"交差点","d":"交通","tr":["branch","regulate","connect"],"ab":["中継"]},{"t":"郵便局","d":"社会","tr":["collect","distribute","exchange","record"],"ab":["中継","交換"]},{"t":"血管","d":"身体","tr":["flow","connect","branch","distribute"],"ab":["流動","循環"]},{"t":"心臓","d":"身体","tr":["flow","distribute","restore","repeat"],"ab":["循環","回復"]},{"t":"川","d":"自然","tr":["flow","branch","connect"],"ab":["流動","循環"]},{"t":"森","d":"自然","tr":["collect","grow","connect","repeat"],"ab":["集合","成長"]},{"t":"学校","d":"社会","tr":["collect","grow","repeat","regulate"],"ab":["集合","成長","規範"]},{"t":"図書館","d":"情報","tr":["collect","record","contain","organize","exchange"],"ab":["保存","集合"]},{"t":"カメラ","d":"道具","tr":["record","portable","regulate"],"ab":["保存"]},{"t":"写真","d":"芸術","tr":["record","contain"],"ab":["保存"]},{"t":"インターネット","d":"技術","tr":["connect","distribute","exchange","flow"],"ab":["交換","中継"]},{"t":"API","d":"技術","tr":["connect","filter","exchange","regulate"],"ab":["交換","境界"]},{"t":"ファイアウォール","d":"技術","tr":["filter","protect","regulate","separate"],"ab":["境界","規範"]},{"t":"銭湯","d":"社会","tr":["wash","restore","collect","repeat"],"ab":["回復","浄化","集合"]},{"t":"睡眠","d":"身体","tr":["restore","repeat","regulate"],"ab":["回復","循環"]},{"t":"病院","d":"社会","tr":["restore","protect","regulate","collect"],"ab":["回復","集合"]},{"t":"脱皮","d":"生物","tr":["transform","separate","grow","repeat"],"ab":["変化","成長"]},{"t":"ジュース","d":"食","tr":["flow","mix","exchange"],"ab":["流動","交換"]},{"t":"梅干し","d":"食","tr":["store","transform","restore"],"ab":["保存","変化","回復"]},{"t":"香水","d":"道具","tr":["flow","mix","exchange"],"ab":["流動","交換"]},{"t":"インク","d":"道具","tr":["flow","mix","record"],"ab":["流動","保存"]},{"t":"料理","d":"食","tr":["mix","transform","repeat","regulate"],"ab":["変化"]},{"t":"発酵","d":"食","tr":["mix","transform","repeat","grow"],"ab":["変化","成長"]},{"t":"市場","d":"経済","tr":["collect","exchange","distribute","regulate"],"ab":["交換","集合"]},{"t":"銀行","d":"経済","tr":["collect","exchange","record","regulate"],"ab":["交換","保存"]},{"t":"コンビニ","d":"社会","tr":["collect","exchange","distribute","contain"],"ab":["交換","集合"]},{"t":"SNS","d":"情報","tr":["connect","exchange","distribute","record"],"ab":["交換","保存"]},{"t":"広場","d":"都市","tr":["collect","connect","exchange"],"ab":["集合"]},{"t":"温室","d":"建築","tr":["cover","contain","grow","regulate"],"ab":["境界","成長"]},{"t":"ロケット","d":"宇宙","tr":["distribute","regulate","transform"],"ab":["変化"]},{"t":"祭り","d":"文化","tr":["collect","repeat","record"],"ab":["集合","保存"]},{"t":"儀式","d":"文化","tr":["repeat","regulate","record"],"ab":["規範","保存"]},{"t":"マナー","d":"社会","tr":["followrule","signal","repeat"],"ab":["規範"]},{"t":"失礼","d":"社会","tr":["deviate","signal"],"ab":["規範","変化"]},{"t":"エラー","d":"技術","tr":["deviate","signal"],"ab":["規範","変化"]},{"t":"交通違反","d":"交通","tr":["deviate","followrule"],"ab":["規範","変化"]},{"t":"タブー","d":"文化","tr":["deviate","followrule","signal"],"ab":["規範","変化"]},{"t":"プロトコル","d":"技術","tr":["followrule","signal"],"ab":["規範"]},{"t":"校則","d":"社会","tr":["followrule","signal","repeat"],"ab":["規範"]},{"t":"ドレスコード","d":"文化","tr":["followrule","signal"],"ab":["規範"]},{"t":"敬語","d":"文化","tr":["followrule","signal","repeat"],"ab":["規範"]},{"t":"筆箱","d":"道具","tr":["contain","organize","portable","openclose"],"ab":["保存","境界"]},{"t":"肺","d":"身体","tr":["expandcompress","airflow","pump","absorb","repeat"],"ab":["循環","交換"]},{"t":"翼","d":"生物","tr":["expandcompress","airflow","support","switch"],"ab":["変化"]},{"t":"アコーディオン","d":"楽器","tr":["expandcompress","openclose","airflow"],"ab":["変化"]},{"t":"蛇腹","d":"構造","tr":["expandcompress","openclose","protect"],"ab":["変化","境界"]},{"t":"巣","d":"生物","tr":["contain","organize","protect","collect"],"ab":["集合","境界"]},{"t":"種","d":"生物","tr":["store","contain","hatch","grow"],"ab":["保存","成長"]},{"t":"卵","d":"生物","tr":["contain","protect","hatch","grow"],"ab":["境界","成長"]},{"t":"細胞","d":"身体","tr":["contain","filter","regulate","copy"],"ab":["境界","成長"]},{"t":"胃","d":"身体","tr":["contain","mix","transform","release"],"ab":["変化","境界"]},{"t":"腸","d":"身体","tr":["absorb","filter","flow","transform"],"ab":["交換","流動"]},{"t":"腎臓","d":"身体","tr":["filter","regulate","release"],"ab":["浄化","交換"]},{"t":"スポンジ","d":"道具","tr":["absorb","release","wash"],"ab":["交換","浄化"]},{"t":"根","d":"生物","tr":["absorb","support","grow","branch"],"ab":["成長","交換"]},{"t":"掃除機","d":"道具","tr":["absorb","collect","filter","contain"],"ab":["集合","浄化"]},{"t":"ダム","d":"建築","tr":["store","release","regulate","flow"],"ab":["保存","流動"]},{"t":"電池","d":"技術","tr":["store","release","exchange","restore"],"ab":["保存","交換"]},{"t":"火山","d":"自然","tr":["store","release","transform","trigger"],"ab":["変化"]},{"t":"汗腺","d":"身体","tr":["release","filter","regulate"],"ab":["交換"]},{"t":"鏡","d":"道具","tr":["reflect","frame"],"ab":["境界"]},{"t":"水面","d":"自然","tr":["reflect","flow","regulate"],"ab":["流動"]},{"t":"エコー","d":"自然","tr":["reflect","repeat","signal"],"ab":["循環"]},{"t":"拡声器","d":"技術","tr":["amplify","broadcast","signal"],"ab":["交換"]},{"t":"レンズ","d":"道具","tr":["focus","amplify","frame","transform"],"ab":["変化"]},{"t":"てこ","d":"道具","tr":["amplify","support","switch"],"ab":["変化"]},{"t":"クッション","d":"道具","tr":["dampen","protect","support"],"ab":["境界"]},{"t":"防波堤","d":"建築","tr":["dampen","protect","separate"],"ab":["境界"]},{"t":"耳栓","d":"道具","tr":["dampen","filter","protect"],"ab":["境界"]},{"t":"指揮者","d":"文化","tr":["sync","regulate","signal","focus"],"ab":["規範"]},{"t":"時計","d":"道具","tr":["sync","repeat","record"],"ab":["循環","保存"]},{"t":"メトロノーム","d":"道具","tr":["sync","pulse","repeat"],"ab":["循環"]},{"t":"地層","d":"自然","tr":["stack","record","contain"],"ab":["保存"]},{"t":"年輪","d":"自然","tr":["stack","record","grow"],"ab":["保存","成長"]},{"t":"サンドイッチ","d":"食","tr":["stack","contain","mix"],"ab":["集合"]},{"t":"税関","d":"社会","tr":["sort","filter","regulate"],"ab":["規範","境界"]},{"t":"ふるい","d":"道具","tr":["sort","filter","repeat"],"ab":["境界"]},{"t":"ルーター","d":"技術","tr":["switch","connect","distribute","filter"],"ab":["中継","交換"]},{"t":"神経","d":"身体","tr":["switch","signal","connect","pulse"],"ab":["中継","交換"]},{"t":"ドミノ","d":"遊び","tr":["trigger","repeat","distribute"],"ab":["変化"]},{"t":"センサー","d":"技術","tr":["trigger","signal","filter"],"ab":["交換"]},{"t":"アラーム","d":"技術","tr":["trigger","signal","repeat"],"ab":["交換"]},{"t":"鍵","d":"道具","tr":["lock","filter","protect","switch"],"ab":["境界"]},{"t":"アンカー","d":"道具","tr":["lock","support","dampen"],"ab":["境界"]},{"t":"ブレーキ","d":"交通","tr":["lock","dampen","regulate"],"ab":["規範"]},{"t":"天秤","d":"道具","tr":["balance","regulate","signal"],"ab":["規範"]},{"t":"自律神経","d":"身体","tr":["balance","regulate","sync","signal"],"ab":["循環"]},{"t":"サーモスタット","d":"技術","tr":["balance","regulate","trigger"],"ab":["循環"]},{"t":"波","d":"自然","tr":["pulse","flow","repeat","broadcast"],"ab":["循環","流動"]},{"t":"車輪","d":"道具","tr":["rotate","support","repeat"],"ab":["循環"]},{"t":"歯車","d":"技術","tr":["rotate","connect","sync","amplify"],"ab":["循環"]},{"t":"惑星","d":"宇宙","tr":["orbit","rotate","repeat","balance"],"ab":["循環"]},{"t":"衛星","d":"宇宙","tr":["orbit","signal","record","broadcast"],"ab":["循環","保存"]},{"t":"電子","d":"科学","tr":["orbit","flow","signal"],"ab":["流動"]},{"t":"骨格","d":"身体","tr":["support","protect","connect"],"ab":["境界"]},{"t":"インフラ","d":"社会","tr":["support","connect","distribute","regulate"],"ab":["中継","規範"]},{"t":"サーバー","d":"技術","tr":["support","store","connect","distribute"],"ab":["保存","中継"]},{"t":"殻","d":"生物","tr":["wrap","protect","peel","hatch"],"ab":["境界","成長"]},{"t":"封筒","d":"道具","tr":["wrap","contain","signal","portable"],"ab":["境界","交換"]},{"t":"布団","d":"道具","tr":["wrap","protect","restore"],"ab":["回復","境界"]},{"t":"雲","d":"自然","tr":["wrap","store","release","flow"],"ab":["流動"]},{"t":"玉ねぎ","d":"食","tr":["peel","stack","contain"],"ab":["集合"]},{"t":"発掘","d":"文化","tr":["peel","record","collect"],"ab":["保存"]},{"t":"発芽","d":"生物","tr":["hatch","trigger","grow"],"ab":["成長"]},{"t":"繭","d":"生物","tr":["wrap","contain","hatch","transform"],"ab":["変化","成長"]},{"t":"噴水","d":"建築","tr":["pump","release","flow","repeat"],"ab":["流動","循環"]},{"t":"注射器","d":"医療","tr":["pump","contain","release","filter"],"ab":["交換"]},{"t":"水道","d":"社会","tr":["pump","flow","distribute","regulate"],"ab":["流動","中継"]},{"t":"渡り鳥","d":"生物","tr":["migrate","sync","grow","navigate"],"ab":["循環","成長"]},{"t":"データ移行","d":"情報","tr":["migrate","copy","record","connect"],"ab":["保存","交換"]},{"t":"遊牧","d":"文化","tr":["migrate","grow","collect"],"ab":["成長","集合"]},{"t":"DNA","d":"身体","tr":["copy","record","store","translate"],"ab":["保存","成長"]},{"t":"印刷","d":"技術","tr":["copy","record","broadcast"],"ab":["保存"]},{"t":"バックアップ","d":"情報","tr":["copy","store","restore","record"],"ab":["保存","回復"]},{"t":"細胞分裂","d":"身体","tr":["copy","grow","repeat"],"ab":["成長","循環"]},{"t":"消しゴム","d":"道具","tr":["erase","regulate","restore"],"ab":["回復"]},{"t":"忘却","d":"心理","tr":["erase","regulate","transform"],"ab":["変化"]},{"t":"リセット","d":"情報","tr":["erase","restore","trigger"],"ab":["回復","変化"]},{"t":"翻訳","d":"文化","tr":["translate","signal","transform"],"ab":["交換","変化"]},{"t":"エンコード","d":"情報","tr":["translate","record","transform"],"ab":["保存","変化"]},{"t":"楽譜","d":"文化","tr":["translate","record","signal"],"ab":["保存"]},{"t":"比喩","d":"言語","tr":["translate","signal","frame"],"ab":["変化"]},{"t":"義手","d":"身体","tr":["substitute","support","connect","signal"],"ab":["回復"]},{"t":"プロキシ","d":"技術","tr":["substitute","connect","filter"],"ab":["中継"]},{"t":"影武者","d":"文化","tr":["substitute","protect","signal"],"ab":["規範"]},{"t":"会議","d":"社会","tr":["focus","collect","signal","regulate"],"ab":["集合","規範"]},{"t":"虫眼鏡","d":"道具","tr":["focus","amplify","frame"],"ab":["変化"]},{"t":"アンテナ","d":"技術","tr":["focus","broadcast","signal","absorb"],"ab":["交換"]},{"t":"窓","d":"建築","tr":["frame","filter","reflect","separate"],"ab":["境界"]},{"t":"額縁","d":"芸術","tr":["frame","contain","signal"],"ab":["境界"]},{"t":"編集","d":"情報","tr":["frame","sort","erase","record"],"ab":["保存","変化"]},{"t":"ラジオ","d":"技術","tr":["broadcast","signal","record"],"ab":["交換","保存"]},{"t":"花粉","d":"生物","tr":["broadcast","migrate","grow"],"ab":["成長"]},{"t":"種子散布","d":"生物","tr":["broadcast","migrate","grow"],"ab":["成長"]},{"t":"堆肥","d":"自然","tr":["recycle","transform","grow"],"ab":["成長","循環"]},{"t":"古着","d":"文化","tr":["recycle","substitute","record"],"ab":["保存"]},{"t":"再生紙","d":"技術","tr":["recycle","transform","record"],"ab":["保存","変化"]},{"t":"水循環","d":"自然","tr":["recycle","flow","repeat"],"ab":["循環","流動"]},{"t":"突然変異","d":"生物","tr":["deviate","transform","grow"],"ab":["変化","成長"]},{"t":"ノイズ","d":"情報","tr":["deviate","signal","dampen"],"ab":["規範","変化"]},{"t":"蜂の巣","d":"生物","tr":["collect","organize","grow","support"],"ab":["集合","成長"]},{"t":"地下鉄","d":"交通","tr":["collect","distribute","connect","branch"],"ab":["中継","集合"]},{"t":"宇宙船","d":"宇宙","tr":["contain","support","migrate","regulate"],"ab":["境界","変化"]},{"t":"ブラックホール","d":"宇宙","tr":["absorb","focus"],"ab":["集合"]},{"t":"図鑑","d":"情報","tr":["sort","record","contain","frame"],"ab":["保存","集合"]},{"t":"ジェット気流","d":"自然","tr":["airflow","flow","broadcast"],"ab":["流動"]},{"t":"台風","d":"自然","tr":["airflow","rotate","flow","release"],"ab":["流動","変化"]},{"t":"呼吸","d":"身体","tr":["airflow","repeat","expandcompress"],"ab":["循環"]},{"t":"太陽帆","d":"宇宙","tr":["expandcompress","reflect","migrate","cover"],"ab":["変化"]},{"t":"舞台幕","d":"文化","tr":["openclose","expandcompress","cover","signal"],"ab":["境界","変化"]},{"t":"帽子","d":"道具","tr":["wrap","cover","protect","portable"],"ab":["境界"]},{"t":"屋根","d":"建築","tr":["cover","protect","support"],"ab":["境界"]},{"t":"大気圏","d":"自然","tr":["wrap","protect","filter"],"ab":["境界"]},{"t":"映画","d":"芸術","tr":["simulate","frame","record"],"ab":["変化","保存"]},{"t":"小説","d":"芸術","tr":["simulate","frame","record"],"ab":["変化","保存"]},{"t":"想像","d":"心理","tr":["simulate","frame"],"ab":["変化"]},{"t":"目標","d":"心理","tr":["aspire","focus","grow"],"ab":["成長"]},{"t":"計画","d":"情報","tr":["aspire","record","regulate"],"ab":["成長","保存"]},{"t":"理想","d":"心理","tr":["aspire","focus"],"ab":["成長"]},{"t":"VR","d":"技術","tr":["simulate","frame"],"ab":["変化"]},{"t":"舞台","d":"文化","tr":["simulate","frame","signal"],"ab":["変化"]},{"t":"ゲーム","d":"遊び","tr":["simulate","trigger","rule"],"ab":["変化"]},{"t":"ロードマップ","d":"情報","tr":["aspire","record","focus"],"ab":["成長","保存"]}];
+
+const SENSES = {
+  '夢': [
+    {id:'sleep', label:'寝ているときに見る夢', note:'眠っている間の映像・体験',
+      traits:['simulate','frame'], domain:'心理'},
+    {id:'goal', label:'将来の夢・目標', note:'願いや、なりたい未来',
+      traits:['aspire','focus','grow'], domain:'心理'}
+  ],
+  '橋': [
+    {id:'structure', label:'川や谷にかかる橋', note:'向こう側へ渡るための構造物',
+      traits:['connect','support'], domain:'建築'},
+    {id:'metaphor', label:'人や物事をつなぐ橋', note:'関係をつくる比喩',
+      traits:['connect','exchange'], domain:'社会'}
+  ]
+};
+
+const RELATION_LABELS = {
+  synonym:'同じ・近い意味',
+  similar:'似た意味',
+  broader:'上位概念',
+  narrower:'下位概念',
+  usedFor:'用途',
+  property:'性質',
+  capableOf:'動き',
+  action:'受ける動き',
+  partOf:'全体',
+  hasPart:'部分',
+  antonym:'反対',
+  location:'場所',
+  causes:'原因・結果',
+  madeOf:'材料',
+  createdBy:'作られ方',
+  related:'関連',
+  dictionary:'辞書リンク'
+};
+
+const RELATION_GROUPS = [
+  {id:'meaning', label:'意味', types:['synonym','similar']},
+  {id:'kind', label:'種類', types:['broader','narrower']},
+  {id:'use', label:'用途', types:['usedFor']},
+  {id:'property', label:'性質', types:['property']},
+  {id:'action', label:'動き', types:['capableOf','action']},
+  {id:'part', label:'部分・全体', types:['partOf','hasPart','madeOf']},
+  {id:'opposite', label:'反対', types:['antonym']},
+  {id:'related', label:'関連', types:['location','causes','createdBy','related','dictionary']}
+];
+
+const EXAMPLES = ['扇子','傘','帽子','銭湯','学校','駅','森','筆箱','夢','橋'];
+
+window.MW_DATA = {
+  TRAITS, TRAIT_WEIGHTS, SEED_WORDS, SENSES,
+  RELATION_LABELS, RELATION_GROUPS, EXAMPLES
+};
+
+
+// External dictionary / knowledge providers.
+// No API keys are required. All providers fail softly.
+
+(() => {
+  const WIKT_API = 'https://ja.wiktionary.org/w/api.php';
+  const WIKI_API = 'https://ja.wikipedia.org/w/api.php';
+  const CONCEPT_API = 'https://api.conceptnet.io';
+
+  const CACHE_PREFIX = 'mw-dict-v3:';
+
+  function normalizeWord(v) {
+    return String(v || '').trim()
+      .replace(/^[「『]/, '').replace(/[」』]$/, '')
+      .replace(/\s+/g, ' ');
+  }
+
+  function conceptSlug(word) {
+    return encodeURIComponent(normalizeWord(word).replace(/\s+/g, '_'));
+  }
+
+  function isUsefulJapaneseWord(word, original='') {
+    const w = normalizeWord(word);
+    if (!w || w === normalizeWord(original) || w.length > 22) return false;
+    if (/[\n\r:#/\\]/.test(w)) return false;
+    if (/^(Category|Template|Help|Wiktionary|付録|索引|カテゴリ)/i.test(w)) return false;
+    return /[一-龯々〆ヵヶぁ-んァ-ヶA-Za-z0-9]/.test(w);
+  }
+
+  async function fetchJSON(url, timeout=5200) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        credentials: 'omit',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function mediawikiURL(base, params) {
+    const url = new URL(base);
+    Object.entries({ ...params, format: 'json', origin: '*' })
+      .forEach(([k, v]) => url.searchParams.set(k, v));
+    return url.toString();
+  }
+
+  async function mediawiki(base, params, timeout=5200) {
+    return fetchJSON(mediawikiURL(base, params), timeout);
+  }
+
+  function stripWikiMarkup(input) {
+    let s = String(input || '');
+    // Keep link label, discard target markup.
+    s = s.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '$2');
+    s = s.replace(/\[\[([^\]]+)\]\]/g, '$1');
+    s = s.replace(/<ref\b[^>]*>[\s\S]*?<\/ref>/gi, ' ');
+    s = s.replace(/<[^>]+>/g, ' ');
+    // A few passes are enough for most nested templates.
+    for (let i = 0; i < 4; i++) s = s.replace(/\{\{[^{}]*\}\}/g, ' ');
+    s = s.replace(/''+/g, '');
+    s = s.replace(/={2,}[^=]+={2,}/g, ' ');
+    s = s.replace(/[|{}]/g, ' ');
+    return s.replace(/\s+/g, ' ').trim();
+  }
+
+  function japaneseSection(wikitext) {
+    const raw = String(wikitext || '');
+    const markers = [
+      /==\s*\{\{(?:ja|jpn)\}\}\s*==/i,
+      /==\s*日本語\s*==/,
+      /==\s*Japanese\s*==/i
+    ];
+    let start = -1;
+    for (const re of markers) {
+      const m = re.exec(raw);
+      if (m) { start = m.index + m[0].length; break; }
+    }
+    if (start < 0) return raw.slice(0, 12000);
+    const rest = raw.slice(start);
+    const next = /\n==[^=][\s\S]*?==\s*(?:\n|$)/.exec(rest);
+    return (next ? rest.slice(0, next.index) : rest).slice(0, 12000);
+  }
+
+  function definitionLines(wikitext) {
+    const section = japaneseSection(wikitext);
+    const lines = [];
+    for (const line of section.split(/\r?\n/)) {
+      if (!/^#(?![#*:])/.test(line.trim())) continue;
+      const cleaned = stripWikiMarkup(line.replace(/^#+\s*/, ''));
+      if (cleaned && cleaned.length >= 2 && cleaned.length <= 280) lines.push(cleaned);
+      if (lines.length >= 3) break;
+    }
+    return lines;
+  }
+
+  function cacheGet(key, ttl=1000*60*60*24*10) {
+    try {
+      const obj = JSON.parse(localStorage.getItem(CACHE_PREFIX + key) || 'null');
+      if (!obj || Date.now() - obj.at > ttl) return null;
+      return obj.value;
+    } catch { return null; }
+  }
+
+  function cacheSet(key, value) {
+    try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ at:Date.now(), value })); }
+    catch {}
+  }
+
+  async function getWiktionary(word) {
+    const w = normalizeWord(word);
+    const cached = cacheGet(`wikt:${w}`);
+    if (cached) return cached;
+
+    let parsed = null;
+    try {
+      parsed = await mediawiki(WIKT_API, {
+        action:'parse',
+        page:w,
+        prop:'wikitext|links',
+        redirects:1
+      });
+    } catch {}
+
+    const raw = parsed?.parse?.wikitext?.['*'] || parsed?.parse?.wikitext || '';
+    const defs = definitionLines(raw);
+    const links = (parsed?.parse?.links || [])
+      .filter(x => Number(x.ns) === 0)
+      .map(x => normalizeWord(x['*'] || x.title || ''))
+      .filter(x => isUsefulJapaneseWord(x, w))
+      .slice(0, 60);
+
+    let search = [];
+    try {
+      const q = await mediawiki(WIKT_API, {
+        action:'query', list:'search', srsearch:w, srnamespace:0,
+        srlimit:28, srprop:'snippet'
+      });
+      search = (q?.query?.search || []).map(x => ({
+        word:normalizeWord(x.title),
+        snippet:stripWikiMarkup(x.snippet || '')
+      })).filter(x => isUsefulJapaneseWord(x.word, w));
+    } catch {}
+
+    const value = {
+      found: Boolean(parsed?.parse?.title),
+      title: parsed?.parse?.title || w,
+      definitions: defs,
+      rawText: stripWikiMarkup(japaneseSection(raw)).slice(0, 4500),
+      links,
+      search
+    };
+    cacheSet(`wikt:${w}`, value);
+    return value;
+  }
+
+  async function getWikipediaIntro(word) {
+    const w = normalizeWord(word);
+    const cached = cacheGet(`wiki:${w}`);
+    if (cached) return cached;
+    let result = { title:w, intro:'', found:false };
+    try {
+      let j = await mediawiki(WIKI_API, {
+        action:'query', titles:w, prop:'extracts',
+        exintro:1, explaintext:1, redirects:1
+      });
+      let pages = Object.values(j?.query?.pages || {});
+      let page = pages.find(x => !x.missing);
+      if (!page) {
+        j = await mediawiki(WIKI_API, {
+          action:'query', generator:'search', gsrsearch:w, gsrlimit:3,
+          prop:'extracts', exintro:1, explaintext:1, redirects:1
+        });
+        pages = Object.values(j?.query?.pages || {});
+        page = pages.find(x => normalizeWord(x.title) === w) || pages[0];
+      }
+      if (page && !page.missing) {
+        result = {
+          title:page.title || w,
+          intro:String(page.extract || '').trim().slice(0, 2400),
+          found:true
+        };
+      }
+    } catch {}
+    cacheSet(`wiki:${w}`, result);
+    return result;
+  }
+
+  async function getWikipediaIntros(words) {
+    const unique = [...new Set(words.map(normalizeWord).filter(Boolean))];
+    const result = new Map();
+    const missing = [];
+    for (const w of unique) {
+      const c = cacheGet(`wiki:${w}`);
+      if (c) result.set(w, c);
+      else missing.push(w);
+    }
+    for (let i=0; i<missing.length; i+=18) {
+      const chunk = missing.slice(i, i+18);
+      try {
+        const j = await mediawiki(WIKI_API, {
+          action:'query', titles:chunk.join('|'), prop:'extracts',
+          exintro:1, explaintext:1, redirects:1
+        }, 6200);
+        const found = new Map();
+        for (const page of Object.values(j?.query?.pages || {})) {
+          if (page.missing) continue;
+          const val = {
+            title:page.title || '',
+            intro:String(page.extract || '').trim().slice(0, 1800),
+            found:true
+          };
+          found.set(normalizeWord(page.title), val);
+          cacheSet(`wiki:${normalizeWord(page.title)}`, val);
+        }
+        for (const w of chunk) {
+          const val = found.get(w) || { title:w, intro:'', found:false };
+          result.set(w, val);
+          if (!found.has(w)) cacheSet(`wiki:${w}`, val);
+        }
+      } catch {
+        for (const w of chunk) result.set(w, {title:w, intro:'', found:false});
+      }
+    }
+    return result;
+  }
+
+  const REL_MAP = {
+    Synonym:'synonym', SimilarTo:'similar', RelatedTo:'related',
+    IsA:'broader', PartOf:'partOf', HasA:'hasPart',
+    UsedFor:'usedFor', CapableOf:'capableOf', HasProperty:'property',
+    Antonym:'antonym', AtLocation:'location', Causes:'causes',
+    ReceivesAction:'action', MadeOf:'madeOf', CreatedBy:'createdBy',
+    DerivedFrom:'related', FormOf:'related', MannerOf:'broader',
+    DefinedAs:'synonym', SymbolOf:'related', HasContext:'related'
+  };
+
+  function nodeMatchesWord(node, word) {
+    if (!node) return false;
+    const label = normalizeWord(node.label || '');
+    if (label === normalizeWord(word)) return true;
+    const slug = normalizeWord(word).replace(/\s+/g, '_');
+    return String(node.term || node['@id'] || '').includes(`/c/ja/${encodeURIComponent(slug)}`)
+      || String(node.term || node['@id'] || '').endsWith(`/c/ja/${slug}`);
+  }
+
+  function relationTypeFor(rel, sourceIsStart) {
+    const base = REL_MAP[rel] || 'related';
+    if (rel === 'IsA') return sourceIsStart ? 'broader' : 'narrower';
+    if (rel === 'PartOf') return sourceIsStart ? 'partOf' : 'hasPart';
+    if (rel === 'HasA') return sourceIsStart ? 'hasPart' : 'partOf';
+    return base;
+  }
+
+  function normalizeConceptEdge(edge, word) {
+    const start = edge?.start || {};
+    const end = edge?.end || {};
+    const sourceIsStart = nodeMatchesWord(start, word);
+    const sourceIsEnd = nodeMatchesWord(end, word);
+    if (!sourceIsStart && !sourceIsEnd) return null;
+    const other = sourceIsStart ? end : start;
+    if (other?.language !== 'ja') return null;
+    const otherWord = normalizeWord(other.label || '');
+    if (!isUsefulJapaneseWord(otherWord, word)) return null;
+    const rel = String(edge?.rel?.label || edge?.rel?.['@id'] || '')
+      .replace(/^\/r\//, '');
+    const dataset = String(edge?.dataset || '');
+    const source = /wordnet/i.test(dataset) ? 'WordNet via ConceptNet' : 'ConceptNet';
+    return {
+      word:otherWord,
+      type:relationTypeFor(rel, sourceIsStart),
+      relation:rel || 'RelatedTo',
+      weight:Number(edge?.weight || 1),
+      source,
+      evidence:String(edge?.surfaceText || ''),
+      direction:sourceIsStart ? 'out' : 'in'
+    };
+  }
+
+  async function getConceptNet(word) {
+    const w = normalizeWord(word);
+    const cached = cacheGet(`cn:${w}`, 1000*60*60*24*5);
+    if (cached) return cached;
+    const slug = conceptSlug(w);
+
+    let lookup = null, related = null;
+    try {
+      lookup = await fetchJSON(`${CONCEPT_API}/c/ja/${slug}?offset=0&limit=100`, 6200);
+    } catch {}
+    try {
+      const url = new URL(`${CONCEPT_API}/related/c/ja/${slug}`);
+      url.searchParams.set('filter', '/c/ja');
+      url.searchParams.set('limit', '45');
+      related = await fetchJSON(url.toString(), 6200);
+    } catch {}
+
+    const relations = (lookup?.edges || [])
+      .map(e => normalizeConceptEdge(e, w))
+      .filter(Boolean);
+
+    const relatedTerms = (related?.related || [])
+      .map(x => {
+        const id = String(x['@id'] || '');
+        const m = id.match(/^\/c\/ja\/([^/]+)/);
+        if (!m) return null;
+        let decoded = '';
+        try { decoded = decodeURIComponent(m[1]).replace(/_/g, ' '); }
+        catch { decoded = m[1].replace(/_/g, ' '); }
+        const candidate = normalizeWord(decoded);
+        if (!isUsefulJapaneseWord(candidate, w)) return null;
+        return { word:candidate, weight:Number(x.weight || 0), type:'related', source:'ConceptNet Numberbatch' };
+      }).filter(Boolean);
+
+    const value = { relations, relatedTerms };
+    cacheSet(`cn:${w}`, value);
+    return value;
+  }
+
+  async function getWordSources(word) {
+    const w = normalizeWord(word);
+    const [wiktionary, wikipedia, conceptnet] = await Promise.all([
+      getWiktionary(w).catch(() => ({found:false,definitions:[],rawText:'',links:[],search:[]})),
+      getWikipediaIntro(w).catch(() => ({found:false,title:w,intro:''})),
+      getConceptNet(w).catch(() => ({relations:[],relatedTerms:[]}))
+    ]);
+    return { word:w, wiktionary, wikipedia, conceptnet };
+  }
+
+  window.MW_PROVIDERS = {
+    normalizeWord, isUsefulJapaneseWord, stripWikiMarkup,
+    getWiktionary, getWikipediaIntro, getWikipediaIntros,
+    getConceptNet, getWordSources
+  };
+})();
+
+
+// Dictionary engine: merge sources, infer traits, build relation dictionary and galaxy candidates.
+
+(() => {
+  const D = window.MW_DATA;
+  const P = window.MW_PROVIDERS;
+
+  const DOMAIN_GROUP = {
+    道具:'made', 家具:'made', 建築:'made', 交通:'made', 都市:'made', 技術:'made', 医療:'made',
+    身体:'living', 生物:'living', 自然:'living',
+    科学:'abstract', 情報:'abstract', 心理:'abstract', 芸術:'abstract', 楽器:'abstract', 言語:'abstract', 構造:'abstract',
+    社会:'social', 文化:'social', 経済:'social', 食:'social', 遊び:'social',
+    宇宙:'cosmic', その他:'other'
+  };
+
+  const DIRECT_RELATION_STRENGTH = {
+    synonym:1.0, similar:.92, narrower:.82, broader:.78,
+    usedFor:.76, property:.78, capableOf:.80, action:.66,
+    partOf:.68, hasPart:.68, antonym:.55, madeOf:.54,
+    causes:.52, location:.40, createdBy:.44, related:.42, dictionary:.30
+  };
+
+  const HINTS = [
+    { re:/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|袋|容器|引き出し|棚|ロッカー)/, traits:['contain','organize'] },
+    { re:/(筆箱|筆入れ|財布|ポーチ|鞄|かばん|バッグ|ケース|水筒|ボトル|カメラ|携帯|スマホ|帽子|傘|扇子)/, traits:['portable'] },
+    { re:/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|引き出し|扉|ドア|蓋|ふた|ファスナー|チャック|扇子|傘)/, traits:['openclose'] },
+    { re:/(屋根|帽子|傘|覆う|日よけ|雨よけ)/, traits:['cover','protect'] },
+    { re:/(膜|皮膚|壁|境界|殻|外側|内側)/, traits:['separate','protect'] },
+    { re:/(風|送風|換気|あおぐ|扇ぐ)/, traits:['airflow'] },
+    { re:/(冷却|冷やす|涼しい|暑さ)/, traits:['cool'] },
+    { re:/(保存|保管|貯蔵|備蓄|蓄える|ためる)/, traits:['store'] },
+    { re:/(放出|排出|吐き出す|噴出|発射)/, traits:['release'] },
+    { re:/(吸収|吸い込む|取り込む)/, traits:['absorb'] },
+    { re:/(洗う|洗浄|入浴|汚れ)/, traits:['wash'] },
+    { re:/(回復|休息|充電|癒やす|再生|休養)/, traits:['restore'] },
+    { re:/(流れる|流動|循環|液体|血液|河川)/, traits:['flow'] },
+    { re:/(混ぜる|混合|ブレンド|配合|発酵)/, traits:['mix','transform'] },
+    { re:/(集める|集合|集積|集まる)/, traits:['collect'] },
+    { re:/(分配|配布|配送|送り出す)/, traits:['distribute'] },
+    { re:/(接続|つなぐ|結ぶ|ネットワーク|通信)/, traits:['connect'] },
+    { re:/(枝分かれ|分岐|複数の経路)/, traits:['branch'] },
+    { re:/(フィルタ|濾過|ろ過|選別|検査)/, traits:['filter'] },
+    { re:/(繰り返す|反復|周期|習慣)/, traits:['repeat'] },
+    { re:/(記録|撮影|アーカイブ|保存する)/, traits:['record'] },
+    { re:/(調整|制御|管理|規制)/, traits:['regulate'] },
+    { re:/(交換|取引|受け渡す|共有)/, traits:['exchange'] },
+    { re:/(成長|発達|育つ|教育|学習|進化)/, traits:['grow'] },
+    { re:/(広がる|縮む|収縮|膨張|伸縮|折りたた)/, traits:['expandcompress'] },
+    { re:/(反射|跳ね返す|反響)/, traits:['reflect'] },
+    { re:/(増幅|拡大|強める)/, traits:['amplify'] },
+    { re:/(弱める|減衰|緩衝|吸音)/, traits:['dampen'] },
+    { re:/(同期|同調|タイミング|リズム)/, traits:['sync'] },
+    { re:/(重ねる|積層|層になる)/, traits:['stack'] },
+    { re:/(分類|仕分け|並べ替え|ソート)/, traits:['sort'] },
+    { re:/(切り替える|切替|スイッチ)/, traits:['switch'] },
+    { re:/(きっかけ|トリガー|反応を起こす)/, traits:['trigger'] },
+    { re:/(包む|くるむ|覆い包む)/, traits:['wrap'] },
+    { re:/(剥く|はがす|脱ぐ)/, traits:['peel'] },
+    { re:/(孵化|芽が出る|発芽|殻を破る)/, traits:['hatch'] },
+    { re:/(ポンプ|押し出す|送り出す)/, traits:['pump'] },
+    { re:/(移住|移動する|渡る|移行)/, traits:['migrate'] },
+    { re:/(複製|コピー|写す)/, traits:['copy'] },
+    { re:/(消す|削除|消去)/, traits:['erase'] },
+    { re:/(翻訳|変換|別の表現)/, traits:['translate'] },
+    { re:/(代わり|代理|代替)/, traits:['substitute'] },
+    { re:/(集中|焦点|一点に集める)/, traits:['focus'] },
+    { re:/(枠|切り取る|範囲を決める)/, traits:['frame'] },
+    { re:/(放送|拡散|一斉に届ける)/, traits:['broadcast'] },
+    { re:/(再利用|リサイクル|循環利用)/, traits:['recycle'] },
+    { re:/(回る|回転|自転)/, traits:['rotate'] },
+    { re:/(周回|公転|軌道)/, traits:['orbit'] },
+    { re:/(支える|支持|骨格|土台)/, traits:['support'] },
+    { re:/(固定|鍵|ロック|止める)/, traits:['lock'] },
+    { re:/(均衡|バランス|釣り合う)/, traits:['balance'] },
+    { re:/(信号|合図|伝える|知らせる)/, traits:['signal'] },
+    { re:/(規則|ルール|決まり|プロトコル|規範)/, traits:['rule','followrule'] },
+    { re:/(違反|逸脱|失礼|例外|エラー)/, traits:['deviate'] },
+    { re:/(想像|夢|映画|仮想|シミュレーション|物語)/, traits:['simulate'] },
+    { re:/(目標|理想|願い|将来|目指す)/, traits:['aspire'] }
+  ];
+
+  function unique(arr) { return [...new Set((arr || []).filter(Boolean))]; }
+
+  function localWord(word) {
+    const w = P.normalizeWord(word);
+    return D.SEED_WORDS.find(x => x.t === w) || null;
+  }
+
+  function inferDomain(text, fallback='その他') {
+    const z = String(text || '');
+    if (/(文房具|道具|器具|用品|装置|機械)/.test(z)) return '道具';
+    if (/(建物|施設|建築|住宅|屋根|壁)/.test(z)) return '建築';
+    if (/(交通|鉄道|道路|駅|車両|航路)/.test(z)) return '交通';
+    if (/(情報|データ|ソフトウェア|通信|ネットワーク|言語)/.test(z)) return '情報';
+    if (/(臓器|身体|人体|生理|血液|神経)/.test(z)) return '身体';
+    if (/(生物|植物|動物|細胞|昆虫|鳥|魚)/.test(z)) return '生物';
+    if (/(自然|地形|気象|河川|海洋|山|森|雲)/.test(z)) return '自然';
+    if (/(食べ物|食品|料理|飲料|食材)/.test(z)) return '食';
+    if (/(芸術|絵画|映画|音楽|作品|写真)/.test(z)) return '芸術';
+    if (/(感情|心理|心|意識|記憶|夢)/.test(z)) return '心理';
+    if (/(社会|制度|公共|コミュニティ|学校|病院)/.test(z)) return '社会';
+    if (/(文化|儀礼|慣習|祭り)/.test(z)) return '文化';
+    if (/(経済|市場|銀行|取引)/.test(z)) return '経済';
+    if (/(宇宙|惑星|恒星|銀河|衛星)/.test(z)) return '宇宙';
+    if (/(科学|物理|化学|元素)/.test(z)) return '科学';
+    return fallback;
+  }
+
+  function inferTraits(text) {
+    const z = String(text || '');
+    const out = [];
+    for (const [key, trait] of Object.entries(D.TRAITS)) {
+      try { if (trait.re && trait.re.test(z)) out.push(key); }
+      catch {}
+    }
+    for (const hint of HINTS) if (hint.re.test(z)) out.push(...hint.traits);
+    return unique(out);
+  }
+
+  function relationEvidenceText(relations) {
+    return (relations || []).map(r => {
+      const type = r.type || '';
+      if (!['usedFor','property','capableOf','action','madeOf','createdBy','broader','narrower','synonym','similar'].includes(type)) return '';
+      return `${r.word} ${r.evidence || ''}`;
+    }).join(' ');
+  }
+
+  function traitWeight(key) { return D.TRAIT_WEIGHTS[key] || 7; }
+
+  function weightedOverlap(a, b) {
+    const aa = unique(a), bb = unique(b);
+    if (!aa.length || !bb.length) return { shared:[], score:0, coverage:0, jaccard:0 };
+    const sb = new Set(bb);
+    const shared = aa.filter(x => sb.has(x));
+    if (!shared.length) return { shared, score:0, coverage:0, jaccard:0 };
+    const sourceTotal = aa.reduce((n,k) => n + traitWeight(k), 0) || 1;
+    const sharedTotal = shared.reduce((n,k) => n + traitWeight(k), 0);
+    const union = unique([...aa,...bb]);
+    const unionTotal = union.reduce((n,k) => n + traitWeight(k), 0) || 1;
+    const coverage = sharedTotal / sourceTotal;
+    const jaccard = sharedTotal / unionTotal;
+    const score = Math.min(1, coverage * .72 + jaccard * .28);
+    return { shared, score, coverage, jaccard };
+  }
+
+  function sourceLabel(rel) {
+    if (!rel) return '';
+    if (rel.source === 'WordNet via ConceptNet') return 'WordNet';
+    if (/ConceptNet/.test(rel.source || '')) return 'ConceptNet';
+    if (/Wiktionary/.test(rel.source || '')) return 'Wiktionary';
+    return rel.source || '';
+  }
+
+  function dedupeRelations(relations) {
+    const map = new Map();
+    for (const r of relations || []) {
+      if (!r?.word) continue;
+      const key = `${r.type}:${r.word}`;
+      const prev = map.get(key);
+      if (!prev || Number(r.weight || 0) > Number(prev.weight || 0)) map.set(key, r);
+    }
+    return [...map.values()];
+  }
+
+  function relationFromWiktionary(item, type='dictionary') {
+    if (!item) return null;
+    const word = typeof item === 'string' ? item : item.word;
+    if (!word) return null;
+    return {
+      word:P.normalizeWord(word), type, relation:'Wiktionary',
+      weight:type === 'dictionary' ? .35 : .45,
+      source:'Wiktionary',
+      evidence:typeof item === 'string' ? '' : (item.snippet || '')
+    };
+  }
+
+  async function buildProfile(word, senseId=null) {
+    const w = P.normalizeWord(word);
+    const local = localWord(w);
+    const sources = await P.getWordSources(w);
+
+    let sense = null;
+    if (senseId && D.SENSES[w]) sense = D.SENSES[w].find(x => x.id === senseId) || null;
+
+    const conceptRelations = sources.conceptnet?.relations || [];
+    const wiktRelations = [
+      ...(sources.wiktionary?.links || []).slice(0,28).map(x => relationFromWiktionary(x)),
+      ...(sources.wiktionary?.search || []).slice(0,18).map(x => relationFromWiktionary(x))
+    ].filter(Boolean);
+
+    const relations = dedupeRelations([...conceptRelations, ...wiktRelations]);
+
+    const definitionParts = [
+      ...(sources.wiktionary?.definitions || []),
+      sources.wikipedia?.intro || ''
+    ].filter(Boolean);
+    const definition = definitionParts[0] || sources.wiktionary?.rawText?.slice(0,300) || '';
+
+    const evidenceText = [
+      w,
+      sources.wiktionary?.rawText || '',
+      sources.wikipedia?.intro || '',
+      relationEvidenceText(conceptRelations)
+    ].join(' ');
+
+    let traits = unique([
+      ...(local?.tr || []),
+      ...(sense?.traits || []),
+      ...inferTraits(evidenceText)
+    ]);
+
+    // A tiny guard: don't let generic dictionary boilerplate flood a word with every trait.
+    if (local) {
+      const localSet = new Set(local.tr || []);
+      const extra = traits.filter(t => localSet.has(t) || traitWeight(t) >= 10);
+      traits = unique([...(local.tr || []), ...extra]).slice(0,10);
+    } else {
+      traits = traits.sort((a,b) => traitWeight(b)-traitWeight(a)).slice(0,9);
+    }
+
+    const domain = sense?.domain || local?.d || inferDomain(evidenceText, 'その他');
+
+    const sourceBadges = [];
+    if (local) sourceBadges.push('ローカル性質辞典');
+    if (sources.wiktionary?.found) sourceBadges.push('Wiktionary');
+    if (sources.wikipedia?.found) sourceBadges.push('Wikipedia');
+    if (conceptRelations.length || (sources.conceptnet?.relatedTerms || []).length) sourceBadges.push('ConceptNet');
+    if (conceptRelations.some(r => r.source === 'WordNet via ConceptNet')) sourceBadges.push('WordNet');
+
+    return {
+      word:w, displayWord:w, domain, traits, definition,
+      definitions:sources.wiktionary?.definitions || [],
+      relations,
+      relatedTerms:sources.conceptnet?.relatedTerms || [],
+      wiktionaryLinks:sources.wiktionary?.links || [],
+      wiktionarySearch:sources.wiktionary?.search || [],
+      sources:unique(sourceBadges),
+      raw:sources
+    };
+  }
+
+  function mergePoolItem(map, item) {
+    if (!item?.word) return;
+    const w = P.normalizeWord(item.word);
+    if (!P.isUsefulJapaneseWord(w)) return;
+    const prev = map.get(w) || {
+      word:w, directRelations:[], relatedWeight:0, dictionaryScore:0, sourceHints:[]
+    };
+    if (item.relation) prev.directRelations.push(item.relation);
+    if (item.relatedWeight) prev.relatedWeight = Math.max(prev.relatedWeight, item.relatedWeight);
+    if (item.dictionaryScore) prev.dictionaryScore = Math.max(prev.dictionaryScore, item.dictionaryScore);
+    if (item.source) prev.sourceHints.push(item.source);
+    map.set(w, prev);
+  }
+
+  function poolFromProfile(profile) {
+    const map = new Map();
+
+    // Curated seed dictionary = stable backbone.
+    for (const x of D.SEED_WORDS) {
+      mergePoolItem(map, {word:x.t, source:'ローカル性質辞典'});
+    }
+
+    for (const r of profile.relations || []) {
+      mergePoolItem(map, {
+        word:r.word, relation:r, source:sourceLabel(r),
+        dictionaryScore:DIRECT_RELATION_STRENGTH[r.type] || .3
+      });
+    }
+
+    for (const r of profile.relatedTerms || []) {
+      mergePoolItem(map, {
+        word:r.word, relatedWeight:Number(r.weight || 0),
+        source:r.source || 'ConceptNet Numberbatch'
+      });
+    }
+
+    for (const x of (profile.wiktionaryLinks || []).slice(0,45)) {
+      mergePoolItem(map, {word:x, dictionaryScore:.22, source:'Wiktionary'});
+    }
+    for (const x of (profile.wiktionarySearch || []).slice(0,28)) {
+      mergePoolItem(map, {word:x.word, dictionaryScore:.26, source:'Wiktionary'});
+    }
+
+    map.delete(profile.word);
+    return [...map.values()];
+  }
+
+  async function buildGalaxyCandidates(profile, onProgress=()=>{}) {
+    const pool = poolFromProfile(profile);
+
+    // Unknown candidates get descriptions in batches, not one request per word.
+    const unknown = pool
+      .filter(x => !localWord(x.word))
+      .sort((a,b) => (b.dictionaryScore+b.relatedWeight) - (a.dictionaryScore+a.relatedWeight))
+      .slice(0,64);
+    onProgress(`辞書から${unknown.length}語の意味をまとめて確認中…`);
+    const introMap = await P.getWikipediaIntros(unknown.map(x => x.word));
+
+    const candidates = [];
+    for (const item of pool) {
+      const local = localWord(item.word);
+      let traits = local?.tr ? [...local.tr] : [];
+      let domain = local?.d || 'その他';
+      let intro = '';
+
+      if (!local) {
+        const info = introMap.get(item.word);
+        intro = info?.intro || '';
+        const relationText = (item.directRelations || [])
+          .map(r => `${r.word} ${r.evidence || ''}`).join(' ');
+        traits = inferTraits(`${item.word} ${intro} ${relationText}`);
+        domain = inferDomain(`${item.word} ${intro}`, 'その他');
+
+        // Synonyms / very close concepts can inherit the source's stable traits.
+        const strongest = (item.directRelations || []).reduce((m,r) =>
+          Math.max(m, DIRECT_RELATION_STRENGTH[r.type] || 0), 0);
+        const hasSynonym = (item.directRelations || []).some(r => ['synonym','similar'].includes(r.type));
+        if (hasSynonym && strongest >= .9) {
+          traits = unique([...traits, ...profile.traits]);
+        }
+      }
+
+      const overlap = weightedOverlap(profile.traits, traits);
+      if (!overlap.shared.length) continue; // Explicit product rule: no shared trait = no galaxy node.
+
+      const directStrength = (item.directRelations || []).reduce((m,r) =>
+        Math.max(m, DIRECT_RELATION_STRENGTH[r.type] || 0), 0);
+      const semantic = Math.max(0, Math.min(1, item.relatedWeight || 0));
+      // Distance is mainly property overlap. Other dictionaries only nudge it.
+      const similarity = Math.min(1,
+        overlap.score * .82 +
+        semantic * .12 +
+        directStrength * .06
+      );
+
+      candidates.push({
+        word:item.word, domain, traits, sharedTraits:overlap.shared,
+        similarity, coverage:overlap.coverage, jaccard:overlap.jaccard,
+        relatedWeight:semantic, directRelations:item.directRelations || [],
+        sources:unique(item.sourceHints),
+        definition:intro
+      });
+    }
+
+    // Stronger property match first; then semantic closeness.
+    candidates.sort((a,b) =>
+      b.similarity - a.similarity ||
+      b.sharedTraits.length - a.sharedTraits.length ||
+      a.word.localeCompare(b.word,'ja')
+    );
+
+    return candidates;
+  }
+
+  function dictionaryGroups(profile, candidates) {
+    const groups = D.RELATION_GROUPS.map(g => ({...g, items:[]}));
+    const byId = new Map(groups.map(g => [g.id, g]));
+    const relationMap = new Map();
+
+    for (const r of profile.relations || []) {
+      const key = `${r.type}:${r.word}`;
+      if (!relationMap.has(key)) relationMap.set(key, r);
+    }
+
+    for (const g of groups) {
+      const items = [];
+      for (const r of relationMap.values()) {
+        if (!g.types.includes(r.type)) continue;
+        items.push({
+          word:r.word, type:r.type,
+          label:D.RELATION_LABELS[r.type] || r.type,
+          weight:Number(r.weight || 0),
+          source:sourceLabel(r)
+        });
+      }
+      // Related endpoint fills the generic "関連" row.
+      if (g.id === 'related') {
+        for (const r of (profile.relatedTerms || []).slice(0,18)) {
+          if (items.some(x => x.word === r.word)) continue;
+          items.push({
+            word:r.word, type:'related', label:'関連',
+            weight:Number(r.weight || 0), source:'ConceptNet'
+          });
+        }
+      }
+      g.items = items
+        .sort((a,b) => b.weight-a.weight)
+        .filter((x,i,arr) => arr.findIndex(y => y.word === x.word) === i)
+        .slice(0,18);
+    }
+
+    // "同じ性質" is the app's original strength and belongs in the dictionary too.
+    const shared = candidates.slice(0,18).map(x => ({
+      word:x.word, type:'sharedTrait',
+      label:x.sharedTraits.map(t => D.TRAITS[t]?.label || t).join('・'),
+      weight:x.similarity, source:'意味ワームホール'
+    }));
+    groups.splice(4, 0, {id:'shared', label:'同じ性質', types:['sharedTrait'], items:shared});
+
+    return groups.filter(g => g.items.length);
+  }
+
+  function domainDistance(a, b) {
+    if (a === b) return 0;
+    const ga = DOMAIN_GROUP[a] || a || 'other';
+    const gb = DOMAIN_GROUP[b] || b || 'other';
+    if (ga === gb) return 1;
+    if (ga === 'cosmic' || gb === 'cosmic') return 3;
+    return 2;
+  }
+
+  window.MW_ENGINE = {
+    localWord, inferTraits, inferDomain, weightedOverlap,
+    buildProfile, buildGalaxyCandidates, dictionaryGroups,
+    domainDistance
+  };
+})();
+
+
 // Galaxy renderer. Distance from center is driven primarily by shared-trait similarity.
 
 (() => {
@@ -125,3 +1188,313 @@
 
   window.MW_GALAXY = { render, computePositions };
 })();
+
+
+// UI controller
+
+(() => {
+  const D = window.MW_DATA;
+  const E = window.MW_ENGINE;
+  const G = window.MW_GALAXY;
+  const P = window.MW_PROVIDERS;
+
+  const $ = s => document.querySelector(s);
+  const state = { word:'', profile:null, candidates:[], selected:null, senseId:null, token:0 };
+
+  const VISUALS = {
+    openclose:['閉じた状態','開いた状態','⇄'],
+    portable:['ここにある','別の場所で使う','→'],
+    expandcompress:['小さい・縮む','広がる','⇄'],
+    airflow:['空気','動いた空気','→'],
+    cool:['熱い','涼しくなる','→'],
+    cover:['外から来るもの','覆われた側','→'],
+    protect:['外からの影響','守られた内側','→'],
+    contain:['外にある','中に収まる','→'],
+    organize:['ばらばら','見つけやすい','→'],
+    store:['今は使わない','あとで使える','→'],
+    release:['中にある','外へ出る','→'],
+    absorb:['外にある','中へ入る','→'],
+    wash:['汚れた状態','整った状態','→'],
+    restore:['減った・疲れた','戻った状態','→'],
+    flow:['ここ','別の場所','→'],
+    mix:['別々','混ざる','→'],
+    collect:['ばらばら','集まる','→'],
+    distribute:['集まる','複数へ分かれる','→'],
+    connect:['離れている','つながる','→'],
+    branch:['ひとつ','複数の道','→'],
+    filter:['全部','選んで通す','→'],
+    repeat:['1回','くり返す','↻'],
+    record:['今の情報','あとで見返す','→'],
+    regulate:['多すぎ・少なすぎ','ちょうどよく','→'],
+    exchange:['片方','もう片方','⇄'],
+    grow:['小さい・途中','育つ・変わる','→'],
+    separate:['内側','外側','｜'],
+    deviate:['ふつう・基準','ずれる','↗'],
+    followrule:['ルール','沿って動く','→'],
+    rule:['自由な動き','決まりに沿う','→'],
+    signal:['合図','相手に届く','→'],
+    reflect:['受ける','はね返す','↩'],
+    amplify:['小さい','大きくする','→'],
+    dampen:['強い','弱める','→'],
+    sync:['別々のタイミング','そろう','→'],
+    stack:['1つ','重なる','→'],
+    sort:['混ざっている','分けて並ぶ','→'],
+    switch:['ひとつの状態','別の状態','⇄'],
+    trigger:['きっかけ','動き出す','→'],
+    wrap:['外側から','包まれる','→'],
+    peel:['覆われている','中が出る','→'],
+    hatch:['中にいる','外へ出る','→'],
+    pump:['中にある','押し出す','→'],
+    migrate:['元の場所','別の場所','→'],
+    copy:['1つ','もう1つできる','→'],
+    erase:['残っている','消える','→'],
+    translate:['表し方A','表し方B','→'],
+    substitute:['本来のもの','代わりになる','→'],
+    focus:['ばらばら','一点に集まる','→'],
+    frame:['広い範囲','見る範囲を決める','→'],
+    broadcast:['1か所','多くへ届く','→'],
+    recycle:['使い終える','また使う','↻'],
+    rotate:['向きA','回って向きB','↻'],
+    orbit:['中心の近く','周りを巡る','↻'],
+    support:['支えられる','安定する','→'],
+    lock:['動く','固定される','→'],
+    balance:['偏る','釣り合う','→'],
+    simulate:['現実の今','別の場面を体験','→'],
+    aspire:['今','目指す未来','→'],
+    transform:['変わる前','変わった後','→']
+  };
+
+  function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g,c=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  function setStatus(text, loading=false) {
+    const el=$('#status');
+    el.textContent=text || '';
+    el.classList.toggle('loading-dot', loading);
+  }
+
+  function setVisible(selector, visible) {
+    const el=$(selector);
+    if (el) el.hidden=!visible;
+  }
+
+  function renderExamples() {
+    const box=$('#examples');
+    box.innerHTML=D.EXAMPLES.map(w=>`<button type="button">#${esc(w)}</button>`).join('');
+    [...box.children].forEach((b,i)=>b.addEventListener('click',()=>{
+      $('#query').value=D.EXAMPLES[i];
+      beginSearch(D.EXAMPLES[i]);
+    }));
+  }
+
+  function askSense(word) {
+    const senses=D.SENSES[word];
+    if (!senses?.length) return false;
+    const card=$('#senseCard'), opts=$('#senseOptions');
+    $('#senseTitle').textContent=`「${word}」はどの意味？`;
+    opts.innerHTML='';
+    senses.forEach(s=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='sense-option';
+      b.innerHTML=`${esc(s.label)}<small>${esc(s.note||'')}</small>`;
+      b.addEventListener('click',()=>{
+        card.hidden=true;
+        state.senseId=s.id;
+        performSearch(word,s.id);
+      });
+      opts.appendChild(b);
+    });
+    card.hidden=false;
+    setVisible('#dictionaryCard',false);
+    setVisible('#galaxyCard',false);
+    setVisible('#compareCard',false);
+    setStatus('意味を1つ選ぶと、関係の精度が上がるで。');
+    return true;
+  }
+
+  async function beginSearch(raw) {
+    const word=P.normalizeWord(raw);
+    if (!word) return;
+    state.senseId=null;
+    if (askSense(word)) return;
+    await performSearch(word,null);
+  }
+
+  async function performSearch(word,senseId) {
+    const token=++state.token;
+    state.word=word; state.selected=null;
+    setVisible('#compareCard',false);
+    setVisible('#dictionaryCard',false);
+    setVisible('#galaxyCard',false);
+
+    // Local seeds render immediately; external dictionaries enrich them afterward.
+    const local=E.localWord(word);
+    if (local) {
+      const preview={
+        word,displayWord:word,domain:local.d,traits:[...(local.tr||[])],
+        definition:'',relations:[],relatedTerms:[],wiktionaryLinks:[],wiktionarySearch:[],
+        sources:['ローカル性質辞典'],raw:{}
+      };
+      state.profile=preview;
+      renderDictionary(preview,[]);
+      setVisible('#dictionaryCard',true);
+      try {
+        const quick=await E.buildGalaxyCandidates(preview,()=>{});
+        if (token===state.token) {
+          state.candidates=quick;
+          renderDictionary(preview,quick);
+          renderGalaxy();
+          setVisible('#galaxyCard',true);
+        }
+      } catch {}
+      setStatus(`まずローカル辞典を表示。外部辞書から関係を追加してる`,true);
+    } else {
+      setStatus(`「${word}」を辞書で調べてる`,true);
+    }
+
+    let profile;
+    try {
+      profile=await E.buildProfile(word,senseId);
+    } catch (err) {
+      console.error(err);
+      setStatus('辞書の取得に失敗したけど、ローカル辞典で続けるで。');
+      profile={
+        word,displayWord:word,domain:'その他',traits:E.localWord(word)?.tr||[],
+        definition:'',relations:[],relatedTerms:[],wiktionaryLinks:[],wiktionarySearch:[],
+        sources:E.localWord(word)?['ローカル性質辞典']:[],raw:{}
+      };
+    }
+    if (token!==state.token) return;
+    state.profile=profile;
+    renderDictionary(profile,[]);
+    setVisible('#dictionaryCard',true);
+
+    setStatus(`性質 ${profile.traits.length}個。関連語を広げてる`,true);
+    let candidates=[];
+    try {
+      candidates=await E.buildGalaxyCandidates(profile,msg=>{
+        if(token===state.token)setStatus(msg,true);
+      });
+    } catch(err) {
+      console.error(err);
+    }
+    if (token!==state.token) return;
+    state.candidates=candidates;
+    renderDictionary(profile,candidates);
+    renderGalaxy();
+    setVisible('#galaxyCard',true);
+
+    const external = candidates.filter(c=>!E.localWord(c.word)).length;
+    setStatus(
+      candidates.length
+        ? `${candidates.length}語を銀河に配置。共通する性質が0個の言葉は表示してへんで。${external?` 辞書由来 +${external}語。`:''}`
+        : '共通する性質を持つ言葉がまだ見つからへんかった。辞書の関係語は下に残してあるで。'
+    );
+  }
+
+  function renderDictionary(profile,candidates) {
+    $('#dictWord').textContent=profile.displayWord||profile.word;
+    $('#dictDomain').textContent=profile.domain||'';
+    const definition=profile.definition
+      ? profile.definition.replace(/\s+/g,' ').slice(0,360)
+      : '意味の本文は取得できなかったけど、関係データと性質から探せるで。';
+    $('#definition').textContent=definition;
+
+    $('#sourceBadges').innerHTML=(profile.sources||[])
+      .map(s=>`<span class="badge">${esc(s)}</span>`).join('');
+
+    $('#traits').innerHTML=(profile.traits||[]).length
+      ? profile.traits.map(t=>`<span class="trait">${esc(D.TRAITS[t]?.label||t)}</span>`).join('')
+      : '<span class="badge">性質はまだ判定できてへん</span>';
+
+    const groups=E.dictionaryGroups(profile,candidates);
+    const box=$('#relationGroups');
+    box.innerHTML='';
+    for (const g of groups) {
+      const row=document.createElement('div');
+      row.className='relation-group';
+      const label=document.createElement('div');
+      label.className='relation-label'; label.textContent=g.label;
+      const words=document.createElement('div'); words.className='relation-words';
+      g.items.slice(0,14).forEach(item=>{
+        const b=document.createElement('button');
+        b.type='button'; b.className='relation-word';
+        const hint=item.type==='sharedTrait'
+          ? item.label
+          : (D.RELATION_LABELS[item.type]||item.label||'');
+        b.innerHTML=`${esc(item.word)}${hint?`<small>${esc(hint)}</small>`:''}`;
+        b.title=item.source?`出典: ${item.source}`:'';
+        b.addEventListener('click',()=>{
+          $('#query').value=item.word;
+          beginSearch(item.word);
+          window.scrollTo({top:0,behavior:'smooth'});
+        });
+        words.appendChild(b);
+      });
+      row.append(label,words); box.appendChild(row);
+    }
+    if (!groups.length) box.innerHTML='<div class="badge">関係語はまだ見つかってへん</div>';
+  }
+
+  function renderGalaxy() {
+    const card=$('#galaxyCard');
+    if (card.hidden) card.hidden=false;
+    $('#galaxyCount').textContent=`${state.candidates.length}語`;
+    const empty=$('#emptyGalaxy');
+    empty.hidden=state.candidates.length>0;
+    G.render({
+      galaxy:$('#galaxy'),
+      nodesLayer:$('#nodesLayer'),
+      activeLine:$('#activeLine'),
+      centerWord:state.profile?.displayWord||state.word,
+      candidates:state.candidates,
+      onSelect:openCompare
+    });
+  }
+
+  function openCompare(candidate) {
+    state.selected=candidate;
+    $('#compareTitle').textContent=`${state.profile.displayWord||state.word} ⇄ ${candidate.word}`;
+    $('#commonTraits').innerHTML=candidate.sharedTraits
+      .map(t=>`<span class="common-trait">${esc(D.TRAITS[t]?.label||t)}</span>`).join('');
+    renderTraitVisual(candidate.sharedTraits);
+    setVisible('#compareCard',true);
+    $('#compareCard').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderTraitVisual(traits) {
+    const box=$('#traitVisual');
+    const ordered=[...traits].sort((a,b)=>(D.TRAIT_WEIGHTS[b]||0)-(D.TRAIT_WEIGHTS[a]||0));
+    box.innerHTML=ordered.slice(0,4).map(t=>{
+      const v=VISUALS[t]||['状態A','状態B','→'];
+      return `<div class="trait-visual-row">
+        <div class="visual-box">${esc(v[0])}</div>
+        <div class="visual-arrow">${esc(v[2])}</div>
+        <div class="visual-box">${esc(v[1])}</div>
+        <div class="visual-name">${esc(D.TRAITS[t]?.label||t)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  let resizeTimer=0;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{if(state.profile&&$('#galaxyCard')&&!$('#galaxyCard').hidden)renderGalaxy()},160);
+  });
+
+  $('#searchForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    beginSearch($('#query').value);
+  });
+
+  renderExamples();
+  $('#query').value='扇子';
+  beginSearch('扇子');
+})();
+
+</script>
+</body>
+</html>
