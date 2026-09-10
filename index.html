@@ -1,418 +1,127 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>意味ワームホール</title><style>
-*{box-sizing:border-box}body{margin:0;background:#0b0c16;color:#f7f5ef;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}main{max-width:820px;margin:auto;padding:18px 14px 70px}header{font-weight:800}h1{font-size:clamp(34px,8vw,62px);line-height:1.05;margin:36px 0 12px;letter-spacing:-.04em}em{color:#b69dff;font-style:normal}.lead{color:#bdb9c8;line-height:1.7}.box,.panel{background:#151625;border:1px solid #ffffff18;border-radius:20px;padding:14px;margin-top:20px}.row{display:flex;gap:8px}input,button{font:inherit}.q{flex:1;min-width:0;background:#0d0e18;border:1px solid #ffffff20;border-radius:12px;padding:14px;color:white;font-size:17px}.go{border:0;border-radius:12px;background:#d9ff72;color:#11140c;padding:12px 15px;font-weight:800}.ex{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ex button{border:0;background:transparent;color:#918d9d;padding:4px}.st{font-size:12px;color:#bdb9c8;min-height:22px;padding-top:8px}.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.modebtn{border:1px solid #ffffff18;background:#0d0e18;color:#aaa6b7;border-radius:12px;padding:10px 8px;font-weight:800}.modebtn.active{background:#d9ff72;color:#11140c;border-color:#d9ff72}.modehint{color:#918d9d;font-size:11px;line-height:1.55;margin-top:7px;min-height:34px}.src{margin:26px 0 8px;font-size:23px}.gal{height:520px;border:1px solid #ffffff16;border-radius:28px;position:relative;background:radial-gradient(circle,#b69dff14,transparent 36%);overflow:hidden}.core,.node{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.core{width:122px;height:122px;background:#d9ff72;color:#14170c;z-index:3;padding:8px}.core b{font-size:22px;overflow-wrap:anywhere}.core span{font-size:9px}.node{width:102px;height:102px;border:1px solid #ffffff22;background:#212238;color:white;z-index:3;padding:8px}.node small{font-size:8px;color:#d9ff72;line-height:1.2}.node b{font-size:14px;max-width:88px;overflow-wrap:anywhere;margin:2px 0}.node span{font-size:8px;color:#aaa6b7;max-width:88px}.line{position:absolute;height:1.5px;background:#b69dff55;transform-origin:0 0;z-index:1;opacity:.55;transition:height .22s ease,background .22s ease,opacity .22s ease,box-shadow .22s ease}.line.active{height:4px;background:#d9ff72;opacity:1;box-shadow:0 0 5px #d9ff72cc,0 0 14px #d9ff7280,0 0 28px #d9ff7240;z-index:2;animation:connectGlow .42s ease-out}.node{transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.node.active{transform:translate(-50%,-50%) scale(1.055);border-color:#d9ff72;background:#292a3e;box-shadow:0 0 0 1px #d9ff7290,0 0 16px #d9ff7255,0 0 30px #d9ff7228}@keyframes connectGlow{0%{opacity:.25;box-shadow:0 0 0 transparent}55%{opacity:1;box-shadow:0 0 8px #d9ff72ee,0 0 22px #d9ff7290}100%{opacity:1}}.panel[hidden]{display:none}.panel h2{font-size:28px;margin:6px 0 14px}.k{color:#aaa6b7;font-size:12px}.same{background:#0d0e18;border-radius:18px;padding:17px;color:#bdb9c8}.same strong{display:block;color:white;font-size:22px;line-height:1.5;margin-top:5px}.cmp{display:grid;gap:8px;margin-top:10px}.r{display:grid;grid-template-columns:minmax(72px,110px) 1fr;gap:10px;background:#ffffff08;border-radius:14px;padding:12px}.r b{color:#d9ff72;overflow-wrap:anywhere}.r span{line-height:1.6}.why{margin-top:12px;padding:12px 14px;background:#0d0e18;border-radius:14px;color:#c9c5d2;font-size:13px;line-height:1.65}.panel.pickglow,.same.pickglow{border-color:#d9ff72aa;box-shadow:0 0 0 1px #d9ff7244,0 0 14px #d9ff7230,0 0 28px #d9ff7216;animation:panelGlow .38s ease-out}.same{border:1px solid transparent;transition:border-color .2s ease,box-shadow .2s ease}.prop{background:#151625;border:1px solid #ffffff18;border-radius:20px;padding:14px;margin:14px 0 10px}.prop.compact{padding:12px 14px}.prop h3{margin:0;font-size:22px}.prophead{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.prophead .pills{margin:0}.propnote,.propgrid,.propitem{display:none}.sensebox{margin-top:10px;padding:12px;border:1px solid #ffffff18;border-radius:14px;background:#0d0e18}.senseopts{display:grid;gap:8px;margin-top:10px}.sensebtn{border:1px solid #ffffff20;background:#151625;color:#fff;border-radius:12px;padding:12px;text-align:left}.sensebtn small{display:block;color:#aaa6b7;margin-top:4px}.diagramHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#f7f5ef}.diagramPair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.miniD{background:#0d0e18;border:1px solid #ffffff12;border-radius:16px;padding:12px;min-height:158px}.miniD strong{display:block;text-align:center;margin-bottom:10px}.stepsD{display:grid;grid-template-columns:1fr auto 90px auto 1fr;gap:8px;align-items:center;min-height:88px}.stepBox,.stepMid{border:1px solid #ffffff20;border-radius:14px;padding:10px 8px;text-align:center;font-size:12px;line-height:1.4}.stepMid{background:#d9ff72;color:#14170c;border-color:#d9ff72;font-weight:700}.stepBox.end{border-color:#d9ff72;color:#fff}.stepArrow{color:#b69dff;text-align:center}.cap{text-align:center;color:#8f8aa0;font-size:12px;margin-top:10px;line-height:1.4}.orbitD{position:relative;height:92px;display:flex;align-items:center;justify-content:center}.ring{width:86px;height:86px;border:1px solid #ffffff2a;border-radius:50%}.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 12px;border-radius:999px;background:#d9ff72;color:#11140c;font-size:12px;font-weight:800}.outer{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:12px;border:1px solid #ffffff22;border-radius:999px;padding:6px 10px;background:#151625}.arr{position:absolute;right:calc(50% - 56px);bottom:6px;color:#b69dff;font-size:18px}@keyframes panelGlow{0%{box-shadow:0 0 0 0 transparent}60%{box-shadow:0 0 0 1px #d9ff7266,0 0 18px #d9ff7238,0 0 36px #d9ff721a}100%{box-shadow:0 0 0 1px #d9ff7244,0 0 14px #d9ff7230,0 0 28px #d9ff7216}}details{margin-top:10px;background:#0d0e18;border-radius:12px;padding:0 12px;color:#9f9bac;font-size:12px}summary{padding:11px 0}.pills{display:flex;gap:5px;flex-wrap:wrap;padding-bottom:10px}.pill{border:1px solid #ffffff18;border-radius:999px;padding:5px 7px}.act{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.sub{border:1px solid #ffffff20;background:#ffffff08;color:white;border-radius:11px;padding:10px}.qq{border-left:3px solid #d9ff72;padding:14px;margin-top:12px;background:#0d0e18;border-radius:10px;line-height:1.7}.modechip{display:inline-block;margin-left:6px;padding:3px 7px;border-radius:999px;background:#ffffff0d;color:#aaa6b7;font-size:10px}@media(max-width:620px){.row{display:block}.go{width:100%;margin-top:7px}.gal{height:500px}h1{margin-top:32px}.node{width:94px;height:94px}.diagramPair{grid-template-columns:1fr}.stepsD{grid-template-columns:1fr;gap:6px}.stepArrow{transform:rotate(90deg)}.prophead{align-items:flex-start}}
+// Galaxy renderer. Distance from center is driven primarily by shared-trait similarity.
 
-/* ---- 図解（元デザインを崩さず結果カード内だけ追加） ---- */
-.diagram{margin:12px 0 10px;padding:12px;border:1px solid #ffffff18;border-radius:16px;background:#0d0e18}
-.diagramHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.diagramHead b{font-size:13px}.diagramHead span{font-size:11px;color:#918d9d}
-.diagramPair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.miniD{min-height:155px;border:1px solid #ffffff10;border-radius:13px;background:#121321;padding:9px;position:relative;overflow:hidden}.miniD>strong{display:block;text-align:center;font-size:13px;margin-bottom:4px;color:#f7f5ef}.miniD .cap{text-align:center;color:#918d9d;font-size:10px;margin-top:4px}
-.orbitD{height:112px;position:relative}.orbitD .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#d9ff72;color:#11140c;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:900;padding:4px;z-index:2}.orbitD .ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:110px;height:78px;border:1.5px solid #8270bd;border-radius:50%}.orbitD .outer{position:absolute;left:50%;top:3px;transform:translateX(-50%);font-size:11px;font-weight:800;background:#1a1b2b;padding:4px 7px;border-radius:999px;border:1px solid #ffffff18;z-index:3}.orbitD .arr{position:absolute;right:11px;top:43px;color:#b69dff;font-size:26px;font-weight:400}
-.flowD{height:112px;display:flex;align-items:center;justify-content:center;gap:5px}.flowD .thing,.stateD .thing{border:1px solid #ffffff20;border-radius:11px;padding:8px 7px;min-width:52px;text-align:center;font-size:10px;font-weight:800;background:#151625}.flowD .mid{background:#d9ff72;color:#11140c;border-radius:999px;padding:9px 8px;font-size:10px;font-weight:900;text-align:center;min-width:55px}.arrowD{color:#b69dff;font-size:18px;flex:0 0 auto}.stateD{height:112px;display:flex;align-items:center;justify-content:center;gap:6px}.stateD .before{opacity:.65}.stateD .after{border-color:#d9ff72}.stateD .mid{font-size:10px;color:#d9ff72;font-weight:900;text-align:center;max-width:60px}.boundaryD{height:112px;display:grid;grid-template-columns:1fr 7px 1fr;align-items:center;gap:6px}.boundaryD .side{text-align:center;font-size:11px}.boundaryD .wall{height:78px;border-radius:999px;background:#d9ff72;position:relative}.boundaryD .wall:after{content:'↔';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg);color:#11140c;font-size:13px;font-weight:900}.branchD{height:112px;position:relative}.branchD .root{position:absolute;left:50%;top:13px;transform:translateX(-50%);background:#d9ff72;color:#11140c;padding:7px 9px;border-radius:999px;font-size:10px;font-weight:900}.branchD .stem{position:absolute;width:2px;height:34px;background:#8270bd;left:50%;top:43px}.branchD .arm1,.branchD .arm2{position:absolute;height:2px;width:45px;background:#8270bd;top:76px}.branchD .arm1{left:calc(50% - 44px);transform:rotate(-23deg);transform-origin:right}.branchD .arm2{left:50%;transform:rotate(23deg);transform-origin:left}.branchD .leaf{position:absolute;bottom:7px;background:#151625;border:1px solid #ffffff20;border-radius:999px;padding:5px 7px;font-size:9px}.branchD .l1{left:10%}.branchD .l2{left:39%}.branchD .l3{right:10%}
-.ruleD{height:112px;position:relative}.ruleD .line{position:absolute;left:12%;right:12%;top:56px;height:2px;background:#696579}.ruleD .dot{position:absolute;width:11px;height:11px;border-radius:50%;background:#d9ff72;top:51px}.ruleD .d1{left:23%}.ruleD .d2{left:46%}.ruleD .d3{left:69%}.ruleD .odd{background:#b69dff;top:25px}.ruleD .oddlabel{position:absolute;top:4px;left:62%;font-size:10px;color:#b69dff;font-weight:800}
-@media(max-width:520px){.diagramPair{grid-template-columns:1fr 1fr;gap:6px}.miniD{min-height:145px;padding:7px}.orbitD .ring{width:98px}.orbitD .center{width:52px;height:52px;font-size:10px}.flowD .thing,.stateD .thing{padding:7px 5px;min-width:45px}.flowD .mid{min-width:47px;padding:8px 5px}}
-.stepsD{min-height:112px;display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,1fr);align-items:center;gap:3px}.stepBox{min-height:48px;border:1px solid #ffffff20;border-radius:11px;padding:7px 5px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;font-weight:800;line-height:1.35;background:#151625}.stepBox.start{color:#d7d4df}.stepBox.end{border-color:#d9ff72;color:#f8ffe8;background:#1b1d25}.stepMid{min-height:54px;border-radius:12px;background:#d9ff72;color:#11140c;padding:7px 4px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:900;line-height:1.3}.stepArrow{color:#b69dff;font-size:15px;text-align:center}.miniD .cap{line-height:1.45}@media(max-width:520px){.stepsD{grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr) 12px minmax(0,1fr);gap:2px}.stepBox{font-size:9px;padding:6px 3px;min-height:46px}.stepMid{font-size:8px;padding:6px 2px}.stepArrow{font-size:12px}}
+(() => {
+  const D = window.MW_DATA;
 
-.sensebox{margin:12px 0 0;padding:14px;border:1px solid #32334b;border-radius:16px;background:#0d0e19}.sensebox[hidden]{display:none}.sensebox b{display:block;font-size:13px;color:#d8d8e5;margin-bottom:9px}.senseopts{display:flex;flex-wrap:wrap;gap:8px}.sensebtn{appearance:none;border:1px solid #44465e;background:#171827;color:#f7f7fb;border-radius:999px;padding:9px 13px;font-weight:700;cursor:pointer}.sensebtn:hover,.sensebtn:focus{border-color:#cfff54}.sensebtn small{display:block;font-size:10px;color:#9597ab;font-weight:500;margin-top:2px}
+  function hashWord(word) {
+    let h = 2166136261;
+    for (const ch of String(word || '')) {
+      h ^= ch.codePointAt(0);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0) / 4294967295;
+  }
 
-/* ===== 性質銀河 UI ===== */
-.modes,.modehint,.modechip,.cmp,.same,.why,details,.act,.qq{display:none!important}
-.src{display:flex;align-items:baseline;gap:6px}
-.gal{height:680px;background:radial-gradient(circle at center,#d9ff7215 0 11%,#b69dff12 12% 28%,#0d0e1a 64%);overflow:hidden;isolation:isolate}
-.gal:before,.gal:after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #ffffff0b;border-radius:50%;pointer-events:none}.gal:before{width:56%;aspect-ratio:1}.gal:after{width:82%;aspect-ratio:1}.galLegend{position:absolute;left:14px;top:12px;color:#777386;font-size:11px;z-index:5}.core{width:112px;height:112px;box-shadow:0 0 30px #d9ff7222}.core b{font-size:21px}.wordNode{width:var(--nodeSize)!important;height:var(--nodeSize)!important;padding:3px!important;background:#1c1d2d;border:1px solid #ffffff1c;z-index:3;cursor:pointer}.wordNode b{font-size:clamp(7px,1.35vw,11px)!important;line-height:1.15;max-width:90%;margin:0!important;font-weight:700}.wordNode.band0{background:#292b38;border-color:#d9ff7270}.wordNode.band1{background:#232436;border-color:#b69dff55}.wordNode.band2{background:#1c1d2c;opacity:.82}.wordNode.band3{background:#131421;opacity:.48;border-color:#ffffff12}.wordNode.active{opacity:1!important;z-index:6;transform:translate(-50%,-50%) scale(1.18)!important}.line{display:block!important;height:1.5px}.line[hidden]{display:none!important}.line.active{height:3px!important}.simpleResult{padding:18px}.simpleResult h2{margin-bottom:16px}.commonBox{background:#0d0e18;border:1px solid #ffffff14;border-radius:18px;padding:16px}.commonBox>small{color:#aaa6b7}.commonTraits{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}.commonTrait{display:inline-flex;align-items:center;min-height:42px;padding:9px 13px;border-radius:999px;background:#d9ff72;color:#11140c;font-weight:900;font-size:15px}.traitOnly{margin-top:12px}.traitDiagram{display:grid;grid-template-columns:1fr;gap:0;background:#121321;border:1px solid #ffffff12;border-radius:14px;overflow:hidden}.traitVisual{min-height:86px;border-bottom:1px solid #ffffff10;padding:11px 14px;display:grid;grid-template-columns:minmax(105px,150px) 1fr;align-items:center;gap:12px}.traitVisual:last-child{border-bottom:0}.traitVisual>b{font-size:13px;color:#d9ff72}.traitGraphic{min-height:58px;display:flex;align-items:center;justify-content:center;gap:10px;color:#f7f5ef}.vDot{width:30px;height:30px;border:1px solid #ffffff2b;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px}.vDot.tiny{width:14px;height:14px;font-size:0;background:#fff}.vArrow{color:#b69dff;font-size:20px}.vShape{display:inline-block;border:1.5px solid #fff}.vClosed{width:8px;height:38px}.vOpen{width:42px;height:28px;border-radius:4px}.vCircle{display:inline-block;border:1.5px solid #fff;border-radius:50%}.vCircle.small{width:15px;height:15px}.vCircle.large{width:39px;height:39px}.wind{font-size:24px;letter-spacing:4px}.rain{font-size:14px;letter-spacing:5px;color:#9996aa}.vRoof{display:inline-block;width:50px;height:12px;border-top:3px solid #d9ff72;border-radius:50%}.vShield{width:38px;height:28px;border:2px solid #d9ff72;border-radius:50% 50% 45% 45%}.vBox{width:42px;height:42px;border:1.5px solid #d9ff72;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}.scatter,.gridDots{font-size:18px;line-height:1.1}.gridDots{letter-spacing:5px}.branchIcon{font-family:monospace;text-align:center;line-height:1.05}.battery{font-size:38px}.battery.low{opacity:.4}.battery.full{color:#d9ff72}.filterBar,.wallIcon{display:inline-block;width:3px;height:46px;background:#d9ff72;border-radius:4px}.vSquare{width:28px;height:28px;border:1.5px solid #fff}.vTriangle{width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:31px solid #d9ff72}.vLink{width:45px;height:2px;background:#b69dff}.rotateIcon,.orbitIcon{font-size:38px;color:#d9ff72}.noCommon{color:#918d9d;line-height:1.6}
-@media(max-width:620px){.gal{height:560px}.core{width:92px;height:92px}.core b{font-size:18px}.galLegend{font-size:9px}.wordNode b{font-size:7px!important}.traitVisual{grid-template-columns:92px 1fr;min-height:78px;padding:8px 10px}.commonTrait{font-size:13px;min-height:36px;padding:7px 11px}}
-</style></head><body><main><header>意味ワームホール <small>性質銀河 β</small></header><h1>似た性質の、<br><em>遠い言葉を探す。</em></h1><p class="lead">入力した言葉を中心に、<strong>性質が近い言葉ほど近く</strong>、遠い言葉ほど外側に並べます。</p><form class="box" id="f"><div class="row"><input class="q" id="q" value="扇子" placeholder="好きな言葉を入力"><button class="go">探す ↗</button></div><div class="ex" id="ex"></div><div class="st" id="st"></div><div class="sensebox" id="sensebox" hidden><b id="senseq">どっちの意味？</b><div class="senseopts" id="senseopts"></div></div></form><section class="prop compact" id="prop" hidden><small class="k">この言葉の性質</small><div class="prophead"><h3 id="ptitle"></h3><div class="pills" id="ptraits"></div></div></section><h2 class="src" id="srchead" hidden><span id="src">扇子</span> の言葉銀河</h2><div class="gal" id="gal" hidden><div class="galLegend">中心に近いほど、性質が似ている</div><div class="core"><span>START</span><b id="core">扇子</b><span id="mode">性質を確認中</span></div><i class="line" id="activeLine" hidden></i><div id="nodes"></div></div><section class="panel simpleResult" id="panel" hidden><small class="k">どこが似てる？</small><h2 id="title"></h2><div class="commonBox"><small>共通する性質</small><div class="commonTraits" id="commonTraits"></div></div><div class="diagram traitOnly" id="diagram"><div class="diagramHead"><b>性質を図で見る</b></div><div class="traitDiagram" id="traitDiagram"></div></div></section></main><script>
-const $=s=>document.querySelector(s),API='https://ja.wikipedia.org/w/api.php',WIKT_API='https://ja.wiktionary.org/w/api.php',CONCEPT_API='https://api.conceptnet.io',P=[[50,13],[18,31],[82,31],[22,76],[78,76]],EX=['扇子','傘','帽子','銭湯','学校','駅','森','筆箱'];
-// 具体的な「ふるまい」。表示の主役はこちら。
-const T={
- simulate:{label:'頭の中で体験する',bridge:'「実際には今ここで起きていない場面を、頭の中で体験する」',re:/夢|想像|空想|映画|物語|シミュレーション/},
- aspire:{label:'未来を目指す',bridge:'「まだ実現していない未来の状態を思い描き、そこへ向かう」',re:/目標|願望|将来|夢|計画|理想/},
- openclose:{label:'開く・閉じる',bridge:'「必要なときに開いて、中のものを使い、終わったら閉じる」',re:/開閉|開く|閉じる|蓋|ふた|ファスナー|チャック|折りたた|折り畳|展開|収束|扇子|傘|蛇腹|筆箱|筆入れ|財布|鞄|かばん|ケース|箱/},
- portable:{label:'持ち運ぶ',bridge:'「使う場所まで持ち運び、必要なときだけ取り出す」',re:/携帯|持ち運|持参|可搬|ポータブル|手持ち|扇子|傘|カメラ|筆箱|筆入れ|財布|鞄|かばん|バッグ|ポーチ|ケース/},
- cover:{label:'覆う',bridge:'「広げた面で、何かを覆ったり遮ったりする」',re:/覆う|覆い|遮る|遮断|日除け|日よけ|雨除け|傘|屋根|皮膚/},
- protect:{label:'守る',bridge:'「外から来るものを弱めて、中を守る」',re:/保護|守る|防ぐ|防止|防御|遮蔽|傘|皮膚|城壁|ファイアウォール/},
- airflow:{label:'風を動かす',bridge:'「空気の流れをつくって、まわりの感じ方を変える」',re:/送風|風を起こ|風を送|あおぐ|扇ぐ|換気|扇子|扇風機/},
- cool:{label:'冷やす',bridge:'「熱を減らして、暑さをやわらげる」',re:/冷却|冷やす|涼|暑さ|扇子|冷蔵庫|エアコン/},
- wash:{label:'洗って落とす',bridge:'「いらないものや汚れを落として、整った状態に戻す」',re:/洗浄|洗う|汚れ|清潔|入浴|風呂|銭湯|洗濯機/},
- restore:{label:'回復する',bridge:'「減ったものを補って、もう一度使える状態に戻す」',re:/回復|疲労|休息|癒|再生|充電|休養|睡眠|銭湯|病院/},
- flow:{label:'流れる',bridge:'「中身が止まらず、場所から場所へ移っていく」',re:/流れる|流動|液体|血液|水分|河川|ジュース|インク|香水/},
- contain:{label:'中に入れる',bridge:'「中身をひとつの範囲に入れて、外へ散らばらないようにする」',re:/容器|収納|入れる|収容|格納|しまう|収める|保存|冷蔵庫|ボトル|箱|ケース|袋|筆箱|筆入れ|財布|鞄|かばん|ポーチ/},
- organize:{label:'整理してしまう',bridge:'「いくつかのものをまとめて、必要なときに取り出しやすくする」',re:/整理|収納|分類|仕分け|しまう|収める|格納|筆箱|筆入れ|工具箱|引き出し|本棚|財布|データベース|図書館/},
- mix:{label:'混ぜる',bridge:'「違うものを混ぜて、ひとつの新しい状態にする」',re:/混合|混ぜる|ブレンド|配合|料理|発酵|ジュース|香水|インク/},
- transform:{label:'形・状態を変える',bridge:'「使う前と後で、形や状態がはっきり変わる」',re:/変形|変化|変換|折りたた|展開|脱皮|発酵|料理|扇子|傘/},
- collect:{label:'集める',bridge:'「ばらばらのものを、いったん同じ場所へ集める」',re:/集める|集合|集積|集団|集まる|駅|港|学校|広場|図書館/},
- distribute:{label:'送り分ける',bridge:'「集まったものを、行き先ごとに分けて送り出す」',re:/分配|配布|配送|送り出|分岐|駅|港|郵便局|交差点/},
- connect:{label:'つなぐ',bridge:'「離れた点どうしをつないで、行き来できるようにする」',re:/接続|つなぐ|ネットワーク|通信|API|駅|インターネット|SNS/},
- branch:{label:'枝分かれする',bridge:'「一つの流れを、複数の行き先へ分ける」',re:/分岐|枝分かれ|経路|交差点|駅|血管|川/},
- filter:{label:'通す・止めるを選ぶ',bridge:'「全部は通さず、条件に合うものだけを通す」',re:/ろ過|濾過|フィルタ|選別|検査|改札|皮膚|ファイアウォール/},
- repeat:{label:'繰り返す',bridge:'「同じ流れを何度も繰り返して、状態を保ったり変えたりする」',re:/反復|繰り返|周期|毎日|習慣|祭り|儀式|洗濯機|睡眠/},
- record:{label:'残してあとで使う',bridge:'「その瞬間の情報を残し、あとから見返せるようにする」',re:/記録|保存|撮影|写真|カメラ|アーカイブ|図書館|記憶/},
- regulate:{label:'動きを調整する',bridge:'「動きすぎたり足りなかったりしないよう、ちょうどよく調整する」',re:/制御|調整|管理|規制|温度調節|交通整理|交差点|冷蔵庫/},
- exchange:{label:'受け渡す',bridge:'「片方からもう片方へ、何かを受け渡す」',re:/交換|取引|受け渡|販売|共有|銀行|市場|コンビニ|API/},
- grow:{label:'育つ',bridge:'「時間と環境の影響を受けながら、少しずつ変わっていく」',re:/成長|発達|育つ|教育|学習|進化|学校|森|温室|種/},
- separate:{label:'内と外を分ける',bridge:'「境目をつくって、内側と外側を分ける」',re:/境界|膜|内外|壁|皮膚|城壁|家|容器/},
- deviate:{label:'決まりから外れる',bridge:'「期待されているやり方や決まりから外れる」',re:/失礼|無礼|違反|逸脱|エラー|タブー|反則/},
- followrule:{label:'決まりに沿う',bridge:'「みんなが共有している決まりに沿って動く」',re:/礼儀|マナー|規則|ルール|プロトコル|校則|ドレスコード|敬語/},
- signal:{label:'意味を伝える',bridge:'「形や言葉そのものより、そこに込めた合図を相手へ伝える」',re:/挨拶|敬語|サイン|信号|合図|礼儀|失礼/},
- expandcompress:{label:'広がる・縮む',bridge:'「広がったり縮んだりしながら働く」',re:/広が|縮む|収縮|膨張|伸縮|扇子|傘|肺|蛇腹|アコーディオン|翼/},
- store:{label:'ためておく',bridge:'「今すぐ使わないものを、中にためてあとで使う」',re:/蓄積|貯蔵|備蓄|ためる|貯める|電池|ダム|種|脂肪|倉庫|記憶/},
- release:{label:'ためたものを出す',bridge:'「中にためたものを、必要なときに外へ出す」',re:/放出|排出|解放|噴出|発射|ダム|電池|汗腺|火山|スプレー/},
- absorb:{label:'吸いこむ',bridge:'「外にあるものを取りこんで、自分の中へ入れる」',re:/吸収|吸い込|吸着|スポンジ|根|肺|腸|掃除機|土壌/},
- reflect:{label:'はね返す',bridge:'「受けたものを、そのまま通さず別の方向へ返す」',re:/反射|反響|跳ね返|鏡|水面|壁|レーダー|エコー/},
- amplify:{label:'大きくする',bridge:'「小さな入力を、もっと大きな動きや信号にして返す」',re:/増幅|拡大|強める|アンプ|拡声器|レンズ|SNS|てこ/},
- dampen:{label:'弱める',bridge:'「強すぎるものを受け止めて、力を小さくする」',re:/減衰|緩衝|吸音|クッション|ダンパー|森|防波堤|耳栓/},
- sync:{label:'タイミングをそろえる',bridge:'「別々に動くもののタイミングを合わせる」',re:/同期|同調|リズム|時計|指揮者|信号機|心拍|メトロノーム/},
- stack:{label:'重ねる',bridge:'「同じ場所に順番に重ねて、まとまりをつくる」',re:/積層|重ねる|層|地層|本棚|スタック|サンドイッチ|年輪/},
- sort:{label:'分けて並べる',bridge:'「違いを見つけて、種類ごとに分けたり並べたりする」',re:/分類|選別|ソート|仕分け|図書館|郵便局|税関|ふるい/},
- switch:{label:'切り替える',bridge:'「条件に合わせて、動き方や行き先を切り替える」',re:/切替|切り替|スイッチ|信号機|ポイント|神経|分岐器|ルーター/},
- trigger:{label:'きっかけで動き出す',bridge:'「ある合図をきっかけに、次の動きが始まる」',re:/引き金|トリガー|反応|きっかけ|ドミノ|センサー|発芽|アラーム/},
- lock:{label:'動かないよう止める',bridge:'「勝手に動いたり開いたりしないよう固定する」',re:/固定|ロック|施錠|鍵|アンカー|ブレーキ|クリップ|関節/},
- balance:{label:'つり合いをとる',bridge:'「片方に偏りすぎないよう、ちょうどいい位置へ戻す」',re:/均衡|バランス|平衡|天秤|シーソー|自律神経|市場|サーモスタット/},
- pulse:{label:'一定の間隔で動く',bridge:'「止まらず、一定の間隔で動きを繰り返す」',re:/脈動|拍動|パルス|心臓|信号|波|点滅|メトロノーム/},
- rotate:{label:'回り続ける',bridge:'「中心のまわりを回りながら働く」',re:/回転|旋回|車輪|扇風機|歯車|惑星|洗濯機|渦/},
- orbit:{label:'中心のまわりを巡る',bridge:'「中心から離れすぎず、まわりを巡り続ける」',re:/公転|軌道|周回|惑星|衛星|電子|通勤|ルーティン/},
- support:{label:'下から支える',bridge:'「自分が土台になって、別のものが動いたり立ったりできるようにする」',re:/支持|支える|土台|柱|骨格|インフラ|根|サーバー/},
- wrap:{label:'包む',bridge:'「外側から包んで、中身をひとまとまりにする」',re:/包装|包む|ラップ|皮|殻|封筒|布団|雲/},
- peel:{label:'外側をはがす',bridge:'「外側の層を取り除いて、中にあるものを出す」',re:/剥離|はがす|皮むき|脱皮|開封|発掘|玉ねぎ|殻/},
- hatch:{label:'中から出てくる',bridge:'「閉じた中で準備して、ある時点で外へ出る」',re:/孵化|発芽|誕生|卵|種|繭|ポップアップ|展開/},
- pump:{label:'押し出して送る',bridge:'「力を加えて、中のものを別の場所へ押し出す」',re:/ポンプ|圧送|心臓|噴水|注射器|肺|水道|コンプレッサー/},
- migrate:{label:'場所を移す',bridge:'「環境や条件に合わせて、まとまって別の場所へ移る」',re:/移動|移住|渡り|迁移|引っ越し|渡り鳥|データ移行|遊牧/},
- copy:{label:'同じものを増やす',bridge:'「元の形や情報を保ちながら、もう一つ作る」',re:/複製|コピー|増殖|DNA|印刷|クローン|バックアップ|細胞分裂/},
- erase:{label:'跡を消す',bridge:'「残っているものを取り除いて、前の状態を見えなくする」',re:/消去|削除|消す|消しゴム|洗濯|忘却|リセット|漂白/},
- translate:{label:'別の形に言い換える',bridge:'「中身を保ちながら、別の表し方へ置き換える」',re:/翻訳|変換|通訳|エンコード|字幕|地図|楽譜|比喩/},
- substitute:{label:'代わりになる',bridge:'「本来そこにあるものの役目を、別のもので引き受ける」',re:/代替|代用|代理|置換|義手|代用品|プロキシ|影武者/},
- focus:{label:'一点に集める',bridge:'「ばらけたものを、一つの場所や目的へ集中させる」',re:/焦点|集中|集光|レンズ|会議|虫眼鏡|アンテナ|視線/},
- frame:{label:'見える範囲を決める',bridge:'「どこからどこまでを見るかを決めて、意味を切り取る」',re:/枠|フレーム|構図|窓|カメラ|額縁|編集|国境/},
- broadcast:{label:'一度に広く届ける',bridge:'「一つの場所から、たくさんの相手へ同時に届ける」',re:/放送|配信|拡散|SNS|ラジオ|スピーカー|花粉|種子散布/},
- recycle:{label:'使ったものを戻して使う',bridge:'「一度使ったものを、そのまま捨てず別の形でまた使う」',re:/再利用|循環|リサイクル|堆肥|血液循環|古着|再生紙|水循環/}
-};
-// 抽象タグは補助。具体的なふるまいの後で見る。
-const K={回復:/回復|疲労|休息|充電|睡眠|銭湯/,浄化:/洗浄|入浴|汚れ|清潔|銭湯|洗濯/,集合:/集合|集団|集まる|学校|森|駅/,流動:/流動|液体|流れる|ジュース|血液|川/,循環:/循環|周期|代謝|睡眠/,境界:/境界|膜|内外|壁|皮膚/,成長:/成長|発達|教育|学習|森|学校/,交換:/交換|取引|受け渡|販売|API/,中継:/中継|ハブ|駅|港|郵便局/,規範:/規範|礼儀|マナー|規則|失礼/,変化:/変化|変形|展開|脱皮|発酵/,保存:/保存|保管|冷蔵庫|記録/};
-let WORDS=`扇子,道具,expandcompress|openclose|portable|airflow|cool|transform,変化|境界;傘,道具,expandcompress|openclose|portable|cover|protect|transform,変化|境界;扇風機,道具,airflow|cool|regulate,変化;冷蔵庫,道具,cool|contain|organize|regulate|record,保存|境界;財布,道具,contain|organize|portable|openclose,保存|境界;工具箱,道具,contain|organize|portable|openclose,保存|境界;引き出し,家具,contain|organize|openclose,保存|境界;本棚,家具,contain|organize|record,保存|集合;データベース,情報,contain|organize|record|filter,保存|集合;洗濯機,道具,wash|repeat|regulate|transform,浄化|変化;充電器,技術,restore|exchange|regulate,回復|交換;皮膚,身体,cover|protect|filter|separate,境界|交換;城壁,建築,protect|separate|regulate,境界|規範;家,建築,cover|protect|contain|separate,境界|集合;駅,交通,collect|distribute|connect|branch,中継|集合;港,交通,collect|distribute|exchange|flow,中継|交換;交差点,交通,branch|regulate|connect,中継;郵便局,社会,collect|distribute|exchange|record,中継|交換;血管,身体,flow|connect|branch|distribute,流動|循環;心臓,身体,flow|distribute|restore|repeat,循環|回復;川,自然,flow|branch|connect,流動|循環;森,自然,collect|grow|connect|repeat,集合|成長;学校,社会,collect|grow|repeat|regulate,集合|成長|規範;図書館,情報,collect|record|contain|organize|exchange,保存|集合;カメラ,道具,record|portable|regulate,保存;写真,芸術,record|contain,保存;インターネット,技術,connect|distribute|exchange|flow,交換|中継;API,技術,connect|filter|exchange|regulate,交換|境界;ファイアウォール,技術,filter|protect|regulate|separate,境界|規範;銭湯,社会,wash|restore|collect|repeat,回復|浄化|集合;睡眠,身体,restore|repeat|regulate,回復|循環;病院,社会,restore|protect|regulate|collect,回復|集合;脱皮,生物,transform|separate|grow|repeat,変化|成長;ジュース,食,flow|mix|exchange,流動|交換;梅干し,食,store|transform|restore,保存|変化|回復;香水,道具,flow|mix|exchange,流動|交換;インク,道具,flow|mix|record,流動|保存;料理,食,mix|transform|repeat|regulate,変化;発酵,食,mix|transform|repeat|grow,変化|成長;市場,経済,collect|exchange|distribute|regulate,交換|集合;銀行,経済,collect|exchange|record|regulate,交換|保存;コンビニ,社会,collect|exchange|distribute|contain,交換|集合;SNS,情報,connect|exchange|distribute|record,交換|保存;広場,都市,collect|connect|exchange,集合;温室,建築,cover|contain|grow|regulate,境界|成長;ロケット,宇宙,distribute|regulate|transform,変化;祭り,文化,collect|repeat|record,集合|保存;儀式,文化,repeat|regulate|record,規範|保存;マナー,社会,followrule|signal|repeat,規範;失礼,社会,deviate|signal,規範|変化;エラー,技術,deviate|signal,規範|変化;交通違反,交通,deviate|followrule,規範|変化;タブー,文化,deviate|followrule|signal,規範|変化;プロトコル,技術,followrule|signal,規範;校則,社会,followrule|signal|repeat,規範;ドレスコード,文化,followrule|signal,規範;敬語,文化,followrule|signal|repeat,規範`.split(';').map(x=>{let[t,d,tr,ab]=x.split(',');return{t,d,tr:tr.split('|'),ab:ab.split('|')}});
-const EXTRA=`筆箱,道具,contain|organize|portable|openclose,保存|境界;肺,身体,expandcompress|airflow|pump|absorb|repeat,循環|交換;翼,生物,expandcompress|airflow|support|switch,変化;アコーディオン,楽器,expandcompress|openclose|airflow,変化;蛇腹,構造,expandcompress|openclose|protect,変化|境界;巣,生物,contain|organize|protect|collect,集合|境界;種,生物,store|contain|hatch|grow,保存|成長;卵,生物,contain|protect|hatch|grow,境界|成長;細胞,身体,contain|filter|regulate|copy,境界|成長;胃,身体,contain|mix|transform|release,変化|境界;腸,身体,absorb|filter|flow|transform,交換|流動;腎臓,身体,filter|regulate|release,浄化|交換;スポンジ,道具,absorb|release|wash,交換|浄化;根,生物,absorb|support|grow|branch,成長|交換;掃除機,道具,absorb|collect|filter|contain,集合|浄化;ダム,建築,store|release|regulate|flow,保存|流動;電池,技術,store|release|exchange|restore,保存|交換;火山,自然,store|release|transform|trigger,変化;汗腺,身体,release|filter|regulate,交換;鏡,道具,reflect|frame,境界;水面,自然,reflect|flow|regulate,流動;エコー,自然,reflect|repeat|signal,循環;拡声器,技術,amplify|broadcast|signal,交換;レンズ,道具,focus|amplify|frame|transform,変化;てこ,道具,amplify|support|switch,変化;クッション,道具,dampen|protect|support,境界;防波堤,建築,dampen|protect|separate,境界;耳栓,道具,dampen|filter|protect,境界;指揮者,文化,sync|regulate|signal|focus,規範;時計,道具,sync|repeat|record,循環|保存;メトロノーム,道具,sync|pulse|repeat,循環;地層,自然,stack|record|contain,保存;年輪,自然,stack|record|grow,保存|成長;サンドイッチ,食,stack|contain|mix,集合;税関,社会,sort|filter|regulate,規範|境界;ふるい,道具,sort|filter|repeat,境界;ルーター,技術,switch|connect|distribute|filter,中継|交換;神経,身体,switch|signal|connect|pulse,中継|交換;ドミノ,遊び,trigger|repeat|distribute,変化;センサー,技術,trigger|signal|filter,交換;アラーム,技術,trigger|signal|repeat,交換;鍵,道具,lock|filter|protect|switch,境界;アンカー,道具,lock|support|dampen,境界;ブレーキ,交通,lock|dampen|regulate,規範;天秤,道具,balance|regulate|signal,規範;自律神経,身体,balance|regulate|sync|signal,循環;サーモスタット,技術,balance|regulate|trigger,循環;波,自然,pulse|flow|repeat|broadcast,循環|流動;車輪,道具,rotate|support|repeat,循環;歯車,技術,rotate|connect|sync|amplify,循環;惑星,宇宙,orbit|rotate|repeat|balance,循環;衛星,宇宙,orbit|signal|record|broadcast,循環|保存;電子,科学,orbit|flow|signal,流動;骨格,身体,support|protect|connect,境界;インフラ,社会,support|connect|distribute|regulate,中継|規範;サーバー,技術,support|store|connect|distribute,保存|中継;殻,生物,wrap|protect|peel|hatch,境界|成長;封筒,道具,wrap|contain|signal|portable,境界|交換;布団,道具,wrap|protect|restore,回復|境界;雲,自然,wrap|store|release|flow,流動;玉ねぎ,食,peel|stack|contain,集合;発掘,文化,peel|record|collect,保存;発芽,生物,hatch|trigger|grow,成長;繭,生物,wrap|contain|hatch|transform,変化|成長;噴水,建築,pump|release|flow|repeat,流動|循環;注射器,医療,pump|contain|release|filter,交換;水道,社会,pump|flow|distribute|regulate,流動|中継;渡り鳥,生物,migrate|sync|grow|navigate,循環|成長;データ移行,情報,migrate|copy|record|connect,保存|交換;遊牧,文化,migrate|grow|collect,成長|集合;DNA,身体,copy|record|store|translate,保存|成長;印刷,技術,copy|record|broadcast,保存;バックアップ,情報,copy|store|restore|record,保存|回復;細胞分裂,身体,copy|grow|repeat,成長|循環;消しゴム,道具,erase|regulate|restore,回復;忘却,心理,erase|regulate|transform,変化;リセット,情報,erase|restore|trigger,回復|変化;翻訳,文化,translate|signal|transform,交換|変化;エンコード,情報,translate|record|transform,保存|変化;楽譜,文化,translate|record|signal,保存;比喩,言語,translate|signal|frame,変化;義手,身体,substitute|support|connect|signal,回復;プロキシ,技術,substitute|connect|filter,中継;影武者,文化,substitute|protect|signal,規範;会議,社会,focus|collect|signal|regulate,集合|規範;虫眼鏡,道具,focus|amplify|frame,変化;アンテナ,技術,focus|broadcast|signal|absorb,交換;窓,建築,frame|filter|reflect|separate,境界;額縁,芸術,frame|contain|signal,境界;編集,情報,frame|sort|erase|record,保存|変化;ラジオ,技術,broadcast|signal|record,交換|保存;花粉,生物,broadcast|migrate|grow,成長;種子散布,生物,broadcast|migrate|grow,成長;堆肥,自然,recycle|transform|grow,成長|循環;古着,文化,recycle|substitute|record,保存;再生紙,技術,recycle|transform|record,保存|変化;水循環,自然,recycle|flow|repeat,循環|流動;突然変異,生物,deviate|transform|grow,変化|成長;ノイズ,情報,deviate|signal|dampen,規範|変化;蜂の巣,生物,collect|organize|grow|support,集合|成長;地下鉄,交通,collect|distribute|connect|branch,中継|集合;宇宙船,宇宙,contain|support|migrate|regulate,境界|変化;ブラックホール,宇宙,absorb|focus,集合;図鑑,情報,sort|record|contain|frame,保存|集合;ジェット気流,自然,airflow|flow|broadcast,流動;台風,自然,airflow|rotate|flow|release,流動|変化;呼吸,身体,airflow|repeat|expandcompress,循環;太陽帆,宇宙,expandcompress|reflect|migrate|cover,変化;舞台幕,文化,openclose|expandcompress|cover|signal,境界|変化`.split(';').map(x=>{let[t,d,tr,ab]=x.split(',');return{t,d,tr:tr.split('|'),ab:ab.split('|')}});WORDS=WORDS.concat(EXTRA);
-WORDS=WORDS.concat([
- {t:'帽子',d:'道具',tr:['wrap','cover','protect','portable'],ab:['境界']},
- {t:'屋根',d:'建築',tr:['cover','protect','support'],ab:['境界']},
- {t:'大気圏',d:'自然',tr:['wrap','protect','filter'],ab:['境界']},
- {t:'映画',d:'芸術',tr:['simulate','frame','record'],ab:['変化','保存']},
- {t:'小説',d:'芸術',tr:['simulate','frame','record'],ab:['変化','保存']},
- {t:'想像',d:'心理',tr:['simulate','frame'],ab:['変化']},
- {t:'目標',d:'心理',tr:['aspire','focus','grow'],ab:['成長']},
- {t:'計画',d:'情報',tr:['aspire','record','regulate'],ab:['成長','保存']},
- {t:'理想',d:'心理',tr:['aspire','focus'],ab:['成長']},
- {t:'VR',d:'技術',tr:['simulate','frame'],ab:['変化']},
- {t:'舞台',d:'文化',tr:['simulate','frame','signal'],ab:['変化']},
- {t:'ゲーム',d:'遊び',tr:['simulate','trigger','rule'],ab:['変化']},
- {t:'ロードマップ',d:'情報',tr:['aspire','record','focus'],ab:['成長','保存']}
-]);
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-const SPECIAL={
- '夢〈寝て見る〉':{simulate:'眠っている間に、現実とは別の場面や出来事を体験する。',frame:'断片的な場面がひとつの世界のように見える。'},
- '夢〈将来の目標〉':{aspire:'まだ実現していない未来の状態を思い描く。',focus:'向かいたい未来に意識を集める。',grow:'最初はぼんやりした願いでも、考えたり続けたりするうちに少しずつ形が見えてくる。'},
- '映画':{simulate:'今ここでは起きていない出来事を、映像を通して体験する。'},
- '小説':{simulate:'今ここでは起きていない出来事を、文章を通して頭の中で体験する。'},
- '想像':{simulate:'実際には目の前にない場面を頭の中に思い浮かべる。'},
- '帽子':{wrap:'頭の外側を包む。',cover:'頭の上を覆う。',protect:'日差しや寒さなどの影響をやわらげる。',portable:'身につけたり持ち運んだりできる。'},
- '屋根':{cover:'建物の上を覆う。',protect:'雨や日差しを直接受けにくくする。'},
- '大気圏':{wrap:'地球の外側を気体の層が包む。',protect:'外から来る強い影響の一部を弱める。'},
- '扇子':{openclose:'骨を開くと面が広がり、閉じると細くまとまる。',portable:'小さく閉じて持ち歩ける。',airflow:'手であおいで空気を動かす。',cool:'風をつくって暑さをやわらげる。',transform:'細い状態と広がった状態を行き来する。'},
- '傘':{openclose:'必要なときに開き、使わないときは閉じる。',portable:'閉じて持ち歩ける。',cover:'広げた面で身体の上を覆う。',protect:'雨や日差しを直接受けにくくする。',transform:'細い状態から大きな面へ広がる。'},
- '銭湯':{wash:'身体の汚れを洗い流して整える。',restore:'温かい湯や休息で疲れをやわらげる。',collect:'いろんな人が同じ場所に集まる。',repeat:'日常の中で何度も使われる。'},
- '充電器':{restore:'減った電力を補って、また使える状態にする。',exchange:'電気を機器へ渡す。'},
- '洗濯機':{wash:'衣服の汚れを水で落として整える。',repeat:'洗い・すすぎ・脱水を順番に繰り返す。'},
- '駅':{collect:'人をいったん同じ場所へ集める。',distribute:'行き先ごとに人を別方向へ送り出す。',branch:'複数の路線や出口へ流れを分ける。'},
- '森':{collect:'多くの木や生き物が同じ環境に集まる。',grow:'木や生き物が時間をかけて育つ。'},
- '学校':{collect:'たくさんの人が同じ場所に集まる。',grow:'学びや経験を通して人が変わっていく。'},
- '財布':{contain:'お金やカードを中にまとめて入れる。',organize:'小さなものを分けて、必要なときに取り出しやすくする。',portable:'必要なものを小さくまとめて持ち歩く。',openclose:'中身を使うときに開き、終わったら閉じる。'},
- '引き出し':{contain:'物を中に入れて外へ散らばらないようにする。',organize:'種類ごとに物をまとめ、必要なものを探しやすくする。',openclose:'使うときだけ開いて中身を取り出す。'},
- '本棚':{contain:'本を決まった範囲に収める。',organize:'本を並べて、必要な一冊を探しやすくする。'},'梅干し':{store:'塩や時間の力で、長く食べられるように保つ。',transform:'生の梅を、塩漬けと乾燥で別の食べ物に変える。',restore:'食べると身体がしゃきっとすることがある。'},
- 'データベース':{contain:'情報をひとつの仕組みの中に格納する。',organize:'情報を整理して、必要なものを探しやすくする。',record:'情報を残してあとから使えるようにする。'},
- '筆箱':{contain:'ペンや消しゴムをひとつの中にまとめて入れる。',organize:'文房具をまとめて、必要なものをすぐ取り出せるようにする。',portable:'文房具を小さくまとめて持ち歩ける。',openclose:'使うときに開き、終わったら閉じる。'},
- '工具箱':{contain:'道具をひとつの箱にまとめて入れる。',organize:'道具を整理して、必要なものを取り出しやすくする。',portable:'必要な道具をまとめて持ち運べる。',openclose:'使うときに開き、終わったら閉じる。'},
- '肺':{expandcompress:'息をするたびに広がったり縮んだりする。',airflow:'空気を身体の中へ入れたり外へ出したりする。',pump:'筋肉の動きで空気を押し出す。'},
- '翼':{expandcompress:'飛ぶときに広げ、休むときはたたむ。',airflow:'空気を受けて流れを変える。'},
- '巣':{contain:'必要なものや子どもを内側に置く。',organize:'中を役割ごとに使い分ける。',protect:'外敵や天候から中を守る。'},
- '種':{store:'成長に必要なものを小さな中にためておく。',contain:'次の植物になる材料を内部に収める。',hatch:'条件がそろうと殻を破って芽が出る。'},
- 'ダム':{store:'水をいったん大量にためる。',release:'必要に応じて水を下流へ流す。',regulate:'水量が多すぎたり少なすぎたりしないよう調整する。'},
- '電池':{store:'電気として使えるエネルギーをためておく。',release:'必要なときに電気を外へ出す。',restore:'充電するとまた使える状態に戻る。'},
- 'ノイズ':{deviate:'本来期待した信号のパターンから外れる。',signal:'受け手に意図しない情報まで届いてしまう。'},
- '突然変異':{deviate:'もとの遺伝情報のパターンから変化が起きる。',transform:'元と少し違う性質へ変わる。'},
- '蜂の巣':{collect:'多くの個体が同じ場所に集まる。',organize:'役割や場所を分けて全体を保つ。',grow:'個体と巣の両方が時間とともに育つ。'}
-};
+  function computePositions(candidates, width, height) {
+    const min = Math.min(width, height);
+    const cx = width / 2, cy = height / 2;
+    const minR = min * .18;
+    const maxR = min * .455;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const points = candidates.map((c, i) => {
+      const similarity = clamp(Number(c.similarity || 0), 0, 1);
+      const targetR = minR + (1 - similarity) * (maxR - minR);
+      const angle = -Math.PI/2 + i * golden + hashWord(c.word) * .48;
+      return {
+        x:cx + Math.cos(angle) * targetR,
+        y:cy + Math.sin(angle) * targetR,
+        targetR,
+        angle,
+        candidate:c
+      };
+    });
 
-const SENSES={
- '夢':[
-  {id:'sleep',label:'寝ているときに見る夢',note:'眠っている間の映像・体験',src:{t:'夢〈寝て見る〉',display:'夢',d:'心理',tr:['simulate','frame'],ab:['変化']}},
-  {id:'goal',label:'将来の夢・目標',note:'願いや、なりたい未来',src:{t:'夢〈将来の目標〉',display:'夢',d:'心理',tr:['aspire','focus','grow'],ab:['成長']}}
- ],
- '橋':[
-  {id:'bridge',label:'川や谷にかかる橋',note:'向こう側へ渡るための構造物',src:{t:'橋〈構造物〉',display:'橋',d:'建築',tr:['connect','support'],ab:['中継']}},
-  {id:'relation',label:'人や物事をつなぐ橋',note:'関係をつくる比喩',src:{t:'橋〈比喩〉',display:'橋',d:'社会',tr:['connect','exchange'],ab:['中継','交換']}}
- ]
-};
-const INVALID_TRAITS={
- 'ブラックホール':new Set(['store','organize','contain']),
- '帽子':new Set(['store','organize','contain','restore']),
- '夢〈寝て見る〉':new Set(['restore','store','contain']),
- '夢〈将来の目標〉':new Set(['restore','store','contain','repeat'])
-};
-const SOURCE_REQUIRED={
- '夢〈寝て見る〉':new Set(['simulate']),
- '夢〈将来の目標〉':new Set(['aspire','grow'])
-};
-function cleanTraits(obj){if(!obj)return obj;let bad=INVALID_TRAITS[obj.t];if(!bad)return obj;return {...obj,tr:(obj.tr||[]).filter(t=>!bad.has(t))}}
-function displayWord(w){return String(w||'').replace(/〈.*?〉/g,'')}
-function isHumanish(w,d){return d==='身体'||d==='心理'||/睡眠|銭湯|病院|休息|人|身体/.test(w)}
-function bridgeText(a,b,t){
- const aw=displayWord(a),bw=displayWord(b);
- if(t==='restore'){
-   if(isHumanish(a,S.src?.d)||isHumanish(b,S.sel?.d)) return '「疲れや乱れをやわらげて、心身を整える」';
-   return '「減った力や機能を補って、また使える状態にする」';
- }
- if(t==='simulate') return '「今ここでは起きていない場面を、別の形で体験する」';
- if(t==='aspire') return '「まだ実現していない未来を思い描き、そこへ向かう」';
- if(t==='store'){
-   if((S.src?.d==='食')||(S.sel?.d==='食')) return '「すぐ食べなくてもいいように、良い状態のまま保っておく」';
-   return '「今すぐ使わないものを、あとで使えるようにためておく」';
- }
- if(t==='organize'){
-   return '「ばらばらなものを整えて、あとで見つけやすくする」';
- }
- if(t==='grow'){
-   if(/夢/.test(a)||/夢/.test(b)) return '「時間をかけて、少しずつ形ができていく」';
-   return '「時間をかけて、少しずつ育ったり変わったりする」';
- }
- return T[t]?.bridge||`「${T[t]?.label||t}」という動きがある`;
-}
-const GROUP={道具:'made',家具:'made',建築:'made',交通:'made',都市:'made',技術:'made',医療:'made',身体:'living',生物:'living',自然:'living',科学:'abstract',情報:'abstract',心理:'abstract',芸術:'abstract',楽器:'abstract',言語:'abstract',社会:'social',文化:'social',経済:'social',食:'social',宇宙:'cosmic',構造:'abstract',遊び:'social'};
-let S={w:'扇子',src:null,c:[],sel:null,senseByWord:{},dict:[]};const CACHE='mwbeh9:',DICT_CACHE='mwdict2:';
-const LOCAL_OVERRIDES={
- '帽子':{t:'帽子',d:'道具',tr:['wrap','cover','protect','portable'],ab:['境界']}
-};
-function normWord(w){return String(w||'').trim().replace(/^[「『]/,'').replace(/[」』]$/,'')}
-function fetchJSON(u,timeout=4200){let c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);return fetch(u,{signal:c.signal}).then(r=>{if(!r.ok)throw new Error('fetch');return r.json()}).finally(()=>clearTimeout(tm))}
-function apiAt(base,p){let u=new URL(base);Object.entries({...p,format:'json',origin:'*'}).forEach(([k,v])=>u.searchParams.set(k,v));return fetchJSON(u)}
-function api(p){return apiAt(API,p)}
-function wiktApi(p){return apiAt(WIKT_API,p)}
-function local(w){w=normWord(w);return cleanTraits(LOCAL_OVERRIDES[w]||WORDS.find(x=>x.t===w)||null)}
-function stripMarkup(s){return String(s||'').replace(/<[^>]+>/g,' ').replace(/\{\{[^{}]*\}\}/g,' ').replace(/\[\[([^\]|]+\|)?([^\]]+)\]\]/g,'$2').replace(/[=|{}'<>]/g,' ').replace(/\s+/g,' ').trim()}
-function validDictWord(w,src=''){w=normWord(w);if(!w||w===src||w.length>18||w.includes('\n')||w.includes('\r')||/[:#\/\\]/.test(w))return false;if(/^(Category|Template|Help|Wiktionary|付録|索引|カテゴリ)/i.test(w))return false;return /[一-龯ぁ-んァ-ヶA-Za-z0-9]/.test(w)}
-function infer(text){let tr=[];for(let[k,v]of Object.entries(T))if(v.re.test(text))tr.push(k);let ab=[];for(let[k,re]of Object.entries(K))if(re.test(text))ab.push(k);return{tr:[...new Set(tr)],ab:[...new Set(ab)]}}
-function surfaceHints(w,text=''){let z=w+' '+text,tr=[],ab=[],d='その他';let add=(...a)=>tr.push(...a);
- if(/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|袋|容器|引き出し|棚|ロッカー)/.test(z)){add('contain','organize');ab.push('保存')}
- if(/(筆箱|筆入れ|財布|ポーチ|鞄|かばん|バッグ|ケース|水筒|ボトル|カメラ|携帯|スマホ)/.test(z))add('portable');
- if(/(箱|ケース|筆入れ|筆箱|財布|ポーチ|鞄|かばん|バッグ|引き出し|扉|ドア|蓋|ふた|ファスナー|チャック)/.test(z))add('openclose');
- if(/(文房具|道具|器具|用品|筆箱|筆入れ)/.test(z))d='道具'; else if(/(食品|飲料|料理|食べ物)/.test(z))d='食'; else if(/(建物|施設|建築)/.test(z))d='建築'; else if(/(情報|データ|ソフトウェア|通信|言語)/.test(z))d='情報'; else if(/(臓器|身体|人体|生理)/.test(z))d='身体'; else if(/(生物|植物|動物)/.test(z))d='生物'; else if(/(自然|地形|気象|河川|海洋)/.test(z))d='自然'; else if(/(交通|鉄道|道路)/.test(z))d='交通'; else if(/(感情|心理)/.test(z))d='心理'; else if(/(社会|制度|公共|コミュニティ)/.test(z))d='社会'; else if(/(文化|儀礼|慣習)/.test(z))d='文化'; else if(/(宇宙|惑星|恒星|銀河)/.test(z))d='宇宙';
- return{tr:[...new Set(tr)],ab:[...new Set(ab)],d}}
+    // Gentle collision relaxation. Keep each point near its intended radius.
+    const nodeRadius = p => {
+      const s = clamp(Number(p.candidate.similarity || 0), 0, 1);
+      return 13 + s * 18;
+    };
 
-async function wiktionaryText(w){
- let j=await wiktApi({action:'parse',page:w,prop:'wikitext',redirects:1}).catch(()=>null);
- let raw=j?.parse?.wikitext?.['*']||j?.parse?.wikitext||'';
- return stripMarkup(raw).slice(0,9000);
-}
-async function wiktionaryRelated(w){
- const found=new Map();
- const add=(name,score=1,snippet='')=>{name=normWord(name);if(!validDictWord(name,w))return;let prev=found.get(name);if(!prev||score>prev.score)found.set(name,{name,score,snippet:stripMarkup(snippet)})};
- let [links,search]=await Promise.all([
-   wiktApi({action:'query',titles:w,prop:'links',plnamespace:0,pllimit:50,redirects:1}).catch(()=>null),
-   wiktApi({action:'query',list:'search',srsearch:w,srlimit:24,srnamespace:0,srprop:'snippet'}).catch(()=>null)
- ]);
- for(const pg of Object.values(links?.query?.pages||{}))for(const l of pg.links||[])add(l.title,2.2,'');
- for(const r of search?.query?.search||[])add(r.title,1.7,r.snippet||'');
- return [...found.values()].sort((a,b)=>b.score-a.score).slice(0,28);
-}
-async function conceptRelated(w){
- const found=new Map(),slug=encodeURIComponent(normWord(w).replace(/\s+/g,'_'));
- let j=await fetchJSON(`${CONCEPT_API}/c/ja/${slug}?offset=0&limit=70`,5000).catch(()=>null);
- const relBonus={Synonym:4,SimilarTo:3.5,RelatedTo:3,IsA:2.7,PartOf:2.3,HasA:2.1,UsedFor:2.1,CapableOf:2.1,AtLocation:1.5,DerivedFrom:1.2,FormOf:1.2};
- for(const e of j?.edges||[]){
-   const rel=String(e.rel?.label||'').replace(/^\/r\//,''),bonus=relBonus[rel]||.5,weight=Number(e.weight||1);
-   for(const n of [e.start,e.end]){
-     if(n?.language!=='ja')continue;
-     const name=normWord(n.label||'');if(!validDictWord(name,w))continue;
-     const score=bonus+Math.min(4,weight);
-     if(!found.has(name)||score>found.get(name).score)found.set(name,{name,score,snippet:rel});
-   }
- }
- return [...found.values()].sort((a,b)=>b.score-a.score).slice(0,30);
-}
-async function wikipediaDescriptions(names){
- const map=new Map();
- for(let i=0;i<names.length;i+=20){
-   const chunk=names.slice(i,i+20);
-   let j=await api({action:'query',titles:chunk.join('|'),prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null);
-   for(const pg of Object.values(j?.query?.pages||{}))if(!pg.missing)map.set(normWord(pg.title),String(pg.extract||''));
- }
- return map;
-}
-async function dictionaryPool(w){
- w=normWord(w);
- try{let c=JSON.parse(localStorage.getItem(DICT_CACHE+w)||'null');if(Array.isArray(c)&&c.length)return c.map(cleanTraits)}catch{}
- const [cn,wk]=await Promise.all([conceptRelated(w),wiktionaryRelated(w)]);
- const merged=new Map();
- for(const item of [...cn,...wk]){
-   if(!validDictWord(item.name,w)||local(item.name))continue;
-   const prev=merged.get(item.name);if(!prev)merged.set(item.name,{...item});else{prev.score=Math.max(prev.score,item.score);prev.snippet=(prev.snippet+' '+item.snippet).trim()}
- }
- const picked=[...merged.values()].sort((a,b)=>b.score-a.score).slice(0,36),names=picked.map(x=>x.name);
- const desc=await wikipediaDescriptions(names);
- const out=[];
- for(const item of picked){
-   const text=item.name+' '+(desc.get(item.name)||'')+' '+(item.snippet||''),inf=infer(text),h=surfaceHints(item.name,text);
-   let tr=[...new Set([...inf.tr,...h.tr])],ab=[...new Set([...inf.ab,...h.ab])];
-   out.push(cleanTraits({t:item.name,d:h.d,tr:tr.slice(0,8),ab:ab.slice(0,6),m:'辞書から追加',dictScore:item.score}));
- }
- try{localStorage.setItem(DICT_CACHE+w,JSON.stringify(out))}catch{}
- return out;
-}
-async function source(w){w=normWord(w);let chosen=S.senseByWord[w],sense=SENSES[w]?.find(x=>x.id===chosen);if(sense)return{...cleanTraits(sense.src),m:'意味を選んだ'};let l=local(w);if(l)return{...l,m:'すぐ見つかった'};try{let c=JSON.parse(localStorage.getItem(CACHE+w)||'null');if(c)return{...c,m:'前に調べた'}}catch{};
- let p=null,[j,wt]=await Promise.all([api({action:'query',titles:w,prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null),wiktionaryText(w).catch(()=>'')]);if(j){let ps=Object.values(j.query?.pages||{});p=ps.find(x=>!x.missing)}
- if(!p){j=await api({action:'query',generator:'search',gsrsearch:w,gsrlimit:4,prop:'extracts',exintro:1,explaintext:1,redirects:1}).catch(()=>null);let ps=j&&Object.values(j.query?.pages||{});p=ps?.find(x=>x.title===w)||ps?.[0]}
- let text=w+' '+wt+' '+(p?.title||'')+' '+(p?.extract||''),inf=infer(text),h=surfaceHints(w,text);inf.tr.push(...h.tr);inf.ab.push(...h.ab);
- if(inf.tr.length<2){let fallback=[[/(風呂|温泉|銭湯)/,['wash','restore','repeat']],[/(飲料|ジュース|液体)/,['flow','mix','contain']],[/(駅|交通)/,['collect','distribute','branch']],[/(学校|教育)/,['collect','grow','repeat']],[/(扇子|うちわ)/,['airflow','cool','portable']],[/(傘)/,['openclose','cover','protect']],[/(箱|ケース|収納|文房具)/,['contain','organize','openclose']]];for(let[r,a]of fallback)if(r.test(text))inf.tr.push(...a)}
- let z=cleanTraits({t:w,d:h.d,tr:[...new Set(inf.tr)].slice(0,8),ab:[...new Set(inf.ab)].slice(0,6),m:wt?'辞書で意味を確認した':(p?'意味を確認した':'形・使い方から推定')});try{localStorage.setItem(CACHE+w,JSON.stringify(z))}catch{}return z}
-function dgroup(d){return GROUP[d]||d||'other'}
-function domainDistance(a,b){if(a===b)return 0;let ga=dgroup(a),gb=dgroup(b);if(ga===gb)return 1;if(ga==='cosmic'||gb==='cosmic')return 3;return 2}
-const TRAIT_WEIGHT={simulate:14,aspire:14,expandcompress:14,organize:13,openclose:12,store:12,release:12,absorb:12,reflect:12,amplify:12,dampen:12,sync:12,sort:12,switch:12,trigger:12,balance:12,pulse:12,rotate:12,orbit:12,wrap:12,peel:12,hatch:12,pump:12,migrate:12,copy:12,erase:12,translate:12,substitute:12,focus:12,frame:12,broadcast:12,recycle:12,airflow:11,wash:11,restore:11,branch:11,filter:11,grow:11,flow:10,mix:10,collect:10,distribute:10,connect:10,record:10,contain:9,portable:9,protect:9,cover:8,repeat:8,regulate:8,exchange:8,transform:8,separate:5,signal:7,deviate:9,followrule:7};
-function bridgeQuality(shared){return shared.reduce((n,t)=>n+(TRAIT_WEIGHT[t]||7),0)}
-function candidates(src,extra=[]){
- const pool=[...WORDS.map(cleanTraits),...Object.values(LOCAL_OVERRIDES).map(cleanTraits),...extra.map(cleanTraits)];
- const seen=new Set();
- return pool.filter(x=>x&&x.t!==src.t&&!seen.has(x.t)&&seen.add(x.t)).map(x=>{
-   const shared=x.tr.filter(k=>src.tr.includes(k));
-   const union=new Set([...(src.tr||[]),...(x.tr||[])]).size||1;
-   const coverage=shared.length/Math.max(1,src.tr.length);
-   const jaccard=shared.length/union;
-   const sim=Math.min(1,coverage*.68+jaccard*.32);
-   const abstract=x.ab.filter(k=>src.ab.includes(k));
-   return {...x,shared,abstract,sim,score:sim*100+shared.length*10+(x.dictScore||0)*.15};
- }).sort((a,b)=>b.score-a.score||a.t.localeCompare(b.t,'ja'));
-}
-function bestTrait(x){let pref=['simulate','aspire','expandcompress','organize','openclose','store','release','absorb','reflect','amplify','dampen','sync','sort','switch','trigger','balance','pulse','rotate','orbit','wrap','peel','hatch','pump','migrate','copy','erase','translate','substitute','focus','frame','broadcast','recycle','wash','restore','airflow','cool','portable','collect','distribute','branch','flow','mix','filter','connect','record','grow','cover','protect','transform','repeat','contain','regulate','separate','deviate','followrule','signal','exchange'];return pref.find(t=>x.shared.includes(t))||x.shared[0]}
-function desc(w,t){if(SPECIAL[w]?.[t])return SPECIAL[w][t];let m={simulate:'今ここでは起きていない場面を、別の形で体験する。',aspire:'まだ実現していない未来の状態を思い描き、そこへ向かう。',openclose:'使うときに開いたり閉じたりして形を変える。',portable:'必要な場所まで持ち運んで使う。',cover:'広げた面で何かを覆う。',protect:'外から来るものを弱めて中を守る。',airflow:'空気の流れをつくる。',cool:'熱や暑さをやわらげる。',wash:'いらないものを落として整える。',restore:isHumanish(w)?'疲れや乱れをやわらげて、心身を整える。':'減った力や機能を補って、また使える状態にする。',flow:'中身が場所から場所へ流れる。',contain:'中身をひとつの範囲に入れて保つ。',organize:'複数のものを整理して、必要なものを取り出しやすくする。',mix:'違うものを混ぜて一つにする。',transform:'使う前後で形や状態が変わる。',collect:'ばらばらのものを一か所に集める。',distribute:'集まったものを行き先ごとに分ける。',connect:'離れた点どうしをつなぐ。',branch:'一つの流れを複数の道へ分ける。',filter:'全部は通さず、条件に合うものだけ通す。',repeat:'同じ流れを何度も繰り返す。',record:'その場の情報や様子を残して、あとから見返せるようにする。',regulate:'動きや量をちょうどよく調整する。',exchange:'片方からもう片方へ何かを渡す。',grow:'時間をかけて、少しずつ育ったり形が変わったりする。',separate:'境目をつくって内側と外側を分ける。',deviate:'期待されているやり方や決まりから外れる。',followrule:'共有されている決まりに沿って動く。',signal:'行動や形を通して相手へ意味を伝える。',expandcompress:'広がったり縮んだりしながら働く。',store:(local(w)?.d==='食'||S.src?.d==='食'&&displayWord(w)===displayWord(S.src?.t))?'長く保つために、よい状態のまま置いておく。':'あとで使えるように、ためておく。',release:'ためたものを必要なときに外へ出す。',absorb:'外にあるものを吸いこんで中へ取りこむ。',reflect:'受けたものを別の方向へはね返す。',amplify:'小さな入力をもっと大きくして返す。',dampen:'強すぎるものを受け止めて弱める。',sync:'別々の動きのタイミングをそろえる。',stack:'順番に重ねてまとまりをつくる。',sort:'違いを見つけて種類ごとに分ける。',switch:'条件に合わせて動き方や行き先を切り替える。',trigger:'ある合図をきっかけに次の動きを始める。',lock:'勝手に動かないよう固定する。',balance:'偏りすぎないようちょうどいい位置へ戻す。',pulse:'一定の間隔で動きを繰り返す。',rotate:'中心のまわりを回りながら働く。',orbit:'中心から離れすぎずまわりを巡る。',support:'自分が土台になって別のものを支える。',wrap:'外側から包んでひとまとまりにする。',peel:'外側の層を取り除いて中を出す。',hatch:'中で準備して、ある時点で外へ出る。',pump:'力を加えて中のものを押し出す。',migrate:'条件に合わせて別の場所へ移る。',copy:'元の形や情報を保ちながらもう一つ作る。',erase:'残っている跡を取り除く。',translate:'中身を保ちながら別の表し方へ変える。',substitute:'本来のものの役目を代わりに引き受ける。',focus:'ばらけたものを一点へ集中させる。',frame:'どこからどこまでを見るかを決める。',broadcast:'一つの場所から多くの相手へ同時に届ける。',recycle:'使ったものを捨てず別の形でまた使う。'};return `${w}では、${m[t]||'同じような働きをする。'}`}
-function question(x,t){let a=displayWord(S.src?.t||S.w),b=displayWord(x.t),m={simulate:`「${a}」がつくる“今ここにない世界”は、現実と何が違う？`,aspire:`「${a}」の“目指す未来”を、別の道筋で考えたら？`,openclose:`「${a}」の“開く・閉じる”を別のものにも移したら？ 何を必要な時だけ広げられる？`,portable:`「${a}」を“持ち運べる仕組み”として考えたら、何をもっと小さくできる？`,organize:`「${a}」が整理しているものは何？ その整理の仕方を別の場所へ移したら？`,wash:`「${a}」から何を落としたら、もっと整う？`,restore:`「${a}」を“回復装置”として見たら、何を元気にできる？`,collect:`「${a}」は何を集め、どこへ送り出している？`,branch:`「${a}」の流れを、もっと別の道へ枝分かれさせたら？`,filter:`「${a}」で“通すもの／止めるもの”を逆にしたら？`,flow:`「${a}」の中では、目に見えない何が流れている？`,mix:`「${a}」に、今は混ざっていない何かを混ぜたら？`,grow:`「${a}」を“育つもの”として見たら、何を成長させたい？`,deviate:`「${a}」で“普通はこうする”から、わざと外れてみたら何が見える？`,followrule:`「${a}」にある見えないルールを一つだけ変えたら？`,signal:`「${a}」が相手に送っている“言葉以外の合図”は何？`};return m[t]||`「${a}」に「${b}」の“${T[t]?.label||t}”を移したら、何が変わる？`}
-function similarityBand(x){if(x.shared.length>=3||x.sim>=.46)return 0;if(x.shared.length>=2||x.sim>=.28)return 1;if(x.shared.length>=1)return 2;return 3}
-function drawActiveLine(node){const gal=$('#gal'),line=$('#activeLine');if(!gal||!node||!line)return;const gr=gal.getBoundingClientRect(),nr=node.getBoundingClientRect();const cx=gr.width/2,cy=gr.height/2,tx=nr.left-gr.left+nr.width/2,ty=nr.top-gr.top+nr.height/2;const d=Math.hypot(tx-cx,ty-cy),a=Math.atan2(ty-cy,tx-cx)*180/Math.PI;line.hidden=false;line.className='line active';line.style.cssText=`left:${cx}px;top:${cy}px;width:${d}px;transform:rotate(${a}deg)`}
-function activateConnection(i){document.querySelectorAll('.node').forEach(n=>n.classList.toggle('active',Number(n.dataset.i)===i));const node=document.querySelector(`.node[data-i="${i}"]`);drawActiveLine(node)}
-function render(){const n=$('#nodes'),gal=$('#gal'),line=$('#activeLine');n.innerHTML='';line.hidden=true;const g=gal.getBoundingClientRect(),w=g.width,h=g.height,min=Math.min(w,h),cx=w/2,cy=h/2;const bands=[[],[],[],[]];S.c.forEach((x,i)=>bands[similarityBand(x)].push({...x,_i:i}));const radii=[.18,.28,.38,.465];bands.forEach((arr,band)=>{arr.forEach((x,j)=>{const count=arr.length||1;const angle=-Math.PI/2+band*.37+(Math.PI*2*j/count);const jitter=((j%3)-1)*min*.009;const r=min*radii[band]+jitter;const px=cx+Math.cos(angle)*r,py=cy+Math.sin(angle)*r;const b=document.createElement('button');b.className=`node wordNode band${band}`;b.dataset.i=x._i;b.style.left=px+'px';b.style.top=py+'px';b.style.setProperty('--nodeSize',`${[62,52,42,31][band]}px`);b.innerHTML=`<b>${displayWord(x.t)}</b>`;b.title=x.shared.length?`共通: ${x.shared.map(k=>T[k]?.label||k).join('・')}`:'共通する性質はまだなし';b.onclick=()=>{activateConnection(x._i);open(S.c[x._i])};n.appendChild(b)})})}
-function dEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function dParts(w,t){
- const special={
-  '自転車':{rotate:['車軸','車輪'],orbit:['車軸','車輪']},
-  '惑星':{rotate:['自転軸','惑星'],orbit:['太陽','惑星']},
-  '衛星':{orbit:['惑星','衛星']},
-  '扇子':{openclose:['閉じた扇子','開いた扇子'],expandcompress:['閉じた扇子','広がった扇面'],airflow:['扇子','空気']},
-  '傘':{openclose:['閉じた傘','開いた傘'],cover:['人','雨・日差し']},
-  '肺':{expandcompress:['縮んだ肺','ふくらんだ肺'],airflow:['肺','空気']},
-  '筆箱':{organize:['文房具','筆箱'],store:['文房具','筆箱'],contain:['文房具','筆箱']},
-  '引き出し':{organize:['物','引き出し'],store:['物','引き出し']},
-  'データベース':{organize:['情報','データベース'],store:['情報','データベース']},
-  '銭湯':{restore:['疲れた身体','整った身体'],wash:['汚れた身体','きれいな身体']},
-  '充電器':{restore:['減った電池','充電された電池']},
-  '駅':{flow:['人','駅'],branch:['人','行き先']},
-  '血管':{flow:['血液','血管'],branch:['血液','全身']},
-  '皮膚':{separate:['身体の内側','外側'],protect:['身体','刺激']},
-  '国境':{separate:['国の内側','外側']},
-  '学校':{grow:['入った人','変わった人'],collect:['人','学校']},
-  '森':{grow:['生き物','森'],collect:['生き物','森']},
-  '失礼':{deviate:['ふつうの振る舞い','ズレた振る舞い']},
-  'エラー':{deviate:['想定どおり','想定外']},
-  '夢〈寝て見る〉':{simulate:['現実の今','夢の場面']},
-  '夢〈将来の目標〉':{aspire:['今の状態','目指す未来'],grow:['ぼんやりした夢','形になった夢']},
-  '映画':{simulate:['今ここ','映画の世界']},
-  '小説':{simulate:['今ここ','物語の世界']},
-  '想像':{simulate:['目の前にない','頭の中の場面']},
-  'VR':{simulate:['現実の場所','仮想の場面']},
-  '舞台':{simulate:['現実の今','演じる世界']},
-  '目標':{aspire:['今','目指す状態']},
-  '計画':{aspire:['今','予定する未来']},
-  'ロードマップ':{aspire:['現在地','目指す先']},'梅干し':{store:['作った梅干し','長く食べられる状態'],transform:['生の梅','梅干し'],restore:['だるい身体','しゃきっとした身体']},'本棚':{organize:['ばらばらの本','見つけやすい本の並び'],contain:['本','本棚']}
- };
- if(special[w]?.[t]) return special[w][t];
- const defaults={
-  simulate:['今ここ','別の場面'],aspire:['今','目指す未来'],
-  rotate:['中心','回るもの'],orbit:['中心','周りを巡るもの'],openclose:['閉じた状態','開いた状態'],expandcompress:['縮んだ状態','広がった状態'],
-  store:['入れるもの','ためる場所'],contain:['中身','入れもの'],organize:['ばらばら','整理された状態'],release:['中にあるもの','外へ出たもの'],absorb:['外にあるもの','中へ入ったもの'],
-  flow:['流れるもの','通り道'],connect:['離れた点','つながった点'],branch:['ひとつの流れ','複数の行き先'],distribute:['集まったもの','複数の行き先'],exchange:['渡すもの','受け取る側'],broadcast:['ひとつの発信元','多くの相手'],migrate:['元の場所','別の場所'],pump:['中にあるもの','押し出されたもの'],
-  restore:['減った状態','戻った状態'],wash:['汚れた状態','整った状態'],recycle:['使い終えたもの','また使えるもの'],erase:['残っている跡','消えた状態'],
-  filter:['全部','条件に合うもの'],sort:['混ざったもの','分けたもの'],separate:['内側','外側'],regulate:['多すぎ・少なすぎ','ちょうどいい'],switch:['ひとつの入口','別の行き先'],
-  cover:['守られる側','外から来るもの'],protect:['守られる側','外から来るもの'],wrap:['中身','包むもの'],frame:['見る範囲','外側'],
-  grow:['小さな状態','育った状態'],copy:['ひとつ','複数'],hatch:['中にいる状態','外へ出た状態'],
-  deviate:['基準','ズレ'],followrule:['ルール','沿った動き'],signal:['意味','相手'],
-  transform:['変わる前','変わった後'],translate:['元の表し方','別の表し方'],substitute:['本来のもの','代わりのもの'],trigger:['きっかけ','次の動き'],
-  reflect:['受けたもの','はね返るもの'],amplify:['小さい入力','大きい出力'],dampen:['強い入力','弱い出力'],sync:['別々の動き','そろった動き'],pulse:['静止','くり返す動き'],repeat:['1回','くり返し'],mix:['別々','混ざった状態'],cool:['熱い状態','冷えた状態'],portable:['置いてある','持ち運ぶ'],collect:['ばらばら','集まった状態'],focus:['ばらばら','一点'],balance:['偏り','釣り合い'],lock:['動く','固定']
- };
- return defaults[t]||[w,'変化'];
-}
-function dKind(t){
- if(['rotate','orbit'].includes(t))return'orbit';
- if(['simulate','aspire','openclose','expandcompress','transform','translate','substitute','trigger','reflect','amplify','dampen','sync','pulse','repeat','mix','cool','portable','balance','lock'].includes(t))return'state';
- if(['store','contain','organize','release','absorb'].includes(t))return'contain';
- if(['flow','connect','distribute','exchange','broadcast','migrate','pump','signal'].includes(t))return'flow';
- if(['restore','wash','recycle','erase'].includes(t))return'restore';
- if(['filter','sort','regulate','switch'].includes(t))return'filter';
- if(['separate','cover','protect','wrap','frame'].includes(t))return'boundary';
- if(['grow','copy','hatch','branch','collect','focus'].includes(t))return'branch';
- if(['deviate','followrule'].includes(t))return'rule';
- return'state';
-}
-function dAction(w,t){
- const special={
-  '夢〈将来の目標〉':{grow:'考える\n続ける',aspire:'目指す'},
-  '学校':{grow:'学ぶ\n経験する'},
-  '森':{grow:'時間がたつ\n育つ'},
-  '銭湯':{restore:'休む\n温まる',wash:'洗う'},
-  '睡眠':{restore:'休む\n眠る'},
-  '充電器':{restore:'電力を\n補う'},
-  '筆箱':{organize:'整理する',contain:'入れる'},
-  'データベース':{organize:'整理する',contain:'保存する'},
-  '失礼':{deviate:'期待から\n外れる'},
-  'エラー':{deviate:'想定から\n外れる'},'梅干し':{store:'保存する',transform:'つける\n干す',restore:'食べて\nしゃきっとする'},'本棚':{organize:'並べる\n探しやすくする',contain:'収める'}
- };
- if(special[w]?.[t])return special[w][t];
- const m={simulate:'別の場面を\n体験する',aspire:'目指す',openclose:'開く / 閉じる',expandcompress:'広がる / 縮む',transform:'変わる',translate:'表し方を変える',substitute:'代わる',trigger:'きっかけ',reflect:'はね返す',amplify:'大きくする',dampen:'弱める',sync:'そろえる',pulse:'くり返す',repeat:'くり返す',mix:'混ぜる',cool:'冷ます',portable:'持ち運ぶ',balance:'整える',lock:'固定する',store:'ためる',contain:'入れる',organize:'整理する',release:'外へ出す',absorb:'取りこむ',flow:'流れる',connect:'つなぐ',distribute:'分けて送る',exchange:'渡す',broadcast:'広く届ける',migrate:'移る',pump:'押し出す',signal:'伝える',restore:'補う / 整える',wash:'洗う',recycle:'また使う',erase:'取り除く',filter:'選ぶ',sort:'分ける',regulate:'調整する',switch:'切り替える',separate:'境界をつくる',cover:'覆う',protect:'守る',wrap:'包む',frame:'範囲を決める',grow:'時間をかける',copy:'増やす',hatch:'育って出る',branch:'分かれる',collect:'集まる',focus:'集める',deviate:'基準から外れる',followrule:'ルールに沿う'};
- return m[t]||'変わる';
-}
-function dCap(t){
- const m={simulate:'現実とは別の場面を体験する',aspire:'今から未来へ向かう',openclose:'閉じたり開いたりして使う',expandcompress:'大きさを変えながら働く',store:'よい状態を保って、あとで使えるようにする',contain:'中に入れて保つ',organize:'並びや置き方を整えて、見つけやすくする',release:'中から外へ出す',absorb:'外から中へ取りこむ',flow:'何かが場所から場所へ動く',connect:'離れたものをつなぐ',branch:'ひとつから複数へ分かれる',restore:'弱った・減った状態から整った状態へ戻る',wash:'いらないものを落として整える',filter:'全部から必要なものを選ぶ',sort:'混ざったものを種類ごとに分ける',separate:'ここまで、という境界をつくる',protect:'外からの影響を弱める',cover:'外側から覆う',grow:'最初の状態から、時間をかけて少しずつ変わる',deviate:'基準から外れたところを見る',followrule:'決められた線に沿って動く'};
- return m[t]||'変化の前後を見る';
-}
-function dMini(w,t){
- const p=dParts(w,t).map(dEsc),k=dKind(t),title=dEsc(displayWord(w));
- if(k==='orbit')return `<div class="miniD"><strong>${title}</strong><div class="orbitD"><div class="outer">${p[1]}</div><div class="ring"></div><div class="center">${p[0]}</div><div class="arr">↻</div></div><div class="cap">${t==='orbit'?'中心のまわりを巡る':'中心を軸に回る'}</div></div>`;
- const action=dEsc(dAction(w,t)).replace(/\n/g,'<br>');
- return `<div class="miniD"><strong>${title}</strong><div class="stepsD"><div class="stepBox start">${p[0]}</div><div class="stepArrow">→</div><div class="stepMid">${action}</div><div class="stepArrow">→</div><div class="stepBox end">${p[1]}</div></div><div class="cap">${dEsc(dCap(t))}</div></div>`;
-}
-function traitVisual(t){const label=T[t]?.label||t;const graphics={
- portable:'<span class="vDot">A</span><span class="vArrow">→</span><span class="vDot">B</span>',
- openclose:'<span class="vShape vClosed"></span><span class="vArrow">↔</span><span class="vShape vOpen"></span>',
- expandcompress:'<span class="vCircle small"></span><span class="vArrow">↔</span><span class="vCircle large"></span>',
- airflow:'<span class="wind">→ → →</span>',
- cover:'<span class="rain">↓ ↓ ↓</span><span class="vRoof"></span><span class="vDot tiny"></span>',
- protect:'<span class="rain">↓ ↓ ↓</span><span class="vShield"></span><span class="vDot tiny"></span>',
- contain:'<span class="vDot tiny"></span><span class="vArrow">→</span><span class="vBox">•</span>',
- organize:'<span class="scatter">• &nbsp; •<br>&nbsp;•</span><span class="vArrow">→</span><span class="gridDots">••<br>••</span>',
- store:'<span class="vDot tiny"></span><span class="vArrow">→</span><span class="vBox">＋</span>',
- flow:'<span class="vDot tiny"></span><span class="vArrow">→→</span><span class="vDot tiny"></span>',
- branch:'<span class="branchIcon">●<br>╱ ╲<br>● ●</span>',
- grow:'<span class="vCircle small"></span><span class="vArrow">→</span><span class="vCircle large"></span>',
- restore:'<span class="battery low">▂</span><span class="vArrow">→</span><span class="battery full">▆</span>',
- filter:'<span class="scatter">•••</span><span class="vArrow">→</span><span class="filterBar">│</span><span class="vArrow">→</span><span>•</span>',
- wash:'<span>●··</span><span class="vArrow">→</span><span>●</span>',
- transform:'<span class="vSquare"></span><span class="vArrow">→</span><span class="vTriangle"></span>',
- connect:'<span class="vDot tiny"></span><span class="vLink"></span><span class="vDot tiny"></span>',
- rotate:'<span class="rotateIcon">↻</span>',orbit:'<span class="orbitIcon">• ⟳ ●</span>',
- separate:'<span>●</span><span class="wallIcon"></span><span>●</span>',
- repeat:'<span class="rotateIcon">↻</span>',
- collect:'<span class="scatter">•&nbsp;&nbsp;•&nbsp;&nbsp;•</span><span class="vArrow">→</span><span>●</span>',
- distribute:'<span>●</span><span class="vArrow">→</span><span class="branchIcon">• &nbsp; •</span>'};
- return `<div class="traitVisual"><b>${dEsc(label)}</b><div class="traitGraphic">${graphics[t]||'<span class="vCircle small"></span><span class="vArrow">→</span><span class="vCircle large"></span>'}</div></div>`}
-function renderTraitDiagram(shared){const box=$('#traitDiagram');if(!shared.length){box.innerHTML='<div class="noCommon">この2語に共通する性質は、まだ見つかっていません。</div>';return}const ordered=[...shared].sort((a,b)=>(TRAIT_WEIGHT[b]||0)-(TRAIT_WEIGHT[a]||0));box.innerHTML=ordered.slice(0,4).map(traitVisual).join('')}
-function pulseComparePanel(){let p=$('#panel');if(!p)return;p.classList.remove('pickglow');void p.offsetWidth;p.classList.add('pickglow')}
-function open(x){S.sel=x;const sw=S.src?.t||S.w,shared=x.shared||[];$('#panel').hidden=false;$('#title').textContent=`${displayWord(sw)} ⇄ ${displayWord(x.t)}`;$('#commonTraits').innerHTML=shared.length?shared.map(k=>`<span class="commonTrait">${dEsc(T[k]?.label||k)}</span>`).join(''):'<span class="noCommon">共通する性質はまだ見つかっていません</span>';renderTraitDiagram(shared);pulseComparePanel();$('#panel').scrollIntoView({behavior:'smooth',block:'start'})}
+    for (let iter=0; iter<34; iter++) {
+      for (let i=0; i<points.length; i++) {
+        const a = points[i];
+        for (let j=i+1; j<points.length; j++) {
+          const b = points[j];
+          let dx=b.x-a.x, dy=b.y-a.y;
+          let d=Math.hypot(dx,dy) || .001;
+          const want=nodeRadius(a)+nodeRadius(b)+7;
+          if (d >= want) continue;
+          const push=(want-d)*.17;
+          dx/=d; dy/=d;
+          a.x-=dx*push; a.y-=dy*push;
+          b.x+=dx*push; b.y+=dy*push;
+        }
+      }
+      for (const p of points) {
+        let dx=p.x-cx, dy=p.y-cy, r=Math.hypot(dx,dy)||1;
+        const desired=p.targetR;
+        const pull=(desired-r)*.13;
+        p.x += dx/r*pull;
+        p.y += dy/r*pull;
+        const margin=24;
+        p.x=clamp(p.x,margin,width-margin);
+        p.y=clamp(p.y,margin,height-margin);
+      }
+    }
+    return points;
+  }
 
-function renderSourceProps(){let src=S.src,box=$('#prop');if(!src||!box)return;box.hidden=false;$('#ptitle').textContent=displayWord(src.t||S.w);$('#ptraits').innerHTML=(src.tr||[]).slice(0,6).map(t=>`<span class="pill">${dEsc(T[t]?.label||t)}</span>`).join('')}
-function hideSenses(){let box=$('#sensebox');if(box)box.hidden=true}
-function askSense(w){let senses=SENSES[w];if(!senses||S.senseByWord[w])return false;let box=$('#sensebox'),opts=$('#senseopts');$('#senseq').textContent=`「${w}」はどっちの意味？`;opts.innerHTML='';senses.forEach(se=>{let b=document.createElement('button');b.type='button';b.className='sensebtn';b.innerHTML=`${dEsc(se.label)}<small>${dEsc(se.note||'')}</small>`;b.onclick=()=>{S.senseByWord[w]=se.id;hideSenses();run(w,true)};opts.appendChild(b)});box.hidden=false;$('#st').textContent='意味を1つ選ぶと、変なつながりを減らせるで。';$('#panel').hidden=true;$('#prop').hidden=true;$('#srchead').hidden=true;$('#gal').hidden=true;return true}
-async function run(w,skipSense=false){w=normWord(w);if(!w)return;S.w=w;S.dict=[];$('#src').textContent=$('#core').textContent=w;$('#mode').textContent='性質を確認中';$('#panel').hidden=true;$('#prop').hidden=true;$('#srchead').hidden=true;$('#gal').hidden=true;if(!skipSense&&askSense(w))return;hideSenses();$('#st').textContent=`「${w}」を辞書で確認してるで…`;let src=await source(w);S.src=src;$('#mode').textContent=`性質 ${src.tr.length}つ`;renderSourceProps();S.c=candidates(src);$('#srchead').hidden=false;$('#gal').hidden=false;render();$('#st').textContent=`まず${S.c.length}語を配置。辞書から言葉を広げてるで…`;
- let dict=await dictionaryPool(w).catch(()=>[]);if(S.w!==w)return;S.dict=dict;S.c=candidates(src,dict);render();const added=S.c.filter(x=>x.m==='辞書から追加').length;$('#st').textContent=`${S.c.length}語を配置したで（辞書から +${added}語）。中心に近いほど性質が似てる。`}
-$('#f').onsubmit=e=>{e.preventDefault();run($('#q').value)};$('#ex').innerHTML=EX.map(x=>`<button type="button">#${x}</button>`).join('');[...$('#ex').children].forEach((b,i)=>b.onclick=()=>{$('#q').value=EX[i];run(EX[i])});run('扇子');
-</script></body></html>
+  function drawActiveLine(galaxy, node, line) {
+    if (!galaxy || !node || !line) return;
+    const gr = galaxy.getBoundingClientRect();
+    const nr = node.getBoundingClientRect();
+    const cx = gr.width/2, cy = gr.height/2;
+    const tx = nr.left-gr.left+nr.width/2;
+    const ty = nr.top-gr.top+nr.height/2;
+    const dist = Math.hypot(tx-cx,ty-cy);
+    const angle = Math.atan2(ty-cy,tx-cx)*180/Math.PI;
+    line.hidden=false;
+    line.style.left=`${cx}px`;
+    line.style.top=`${cy}px`;
+    line.style.width=`${dist}px`;
+    line.style.transform=`rotate(${angle}deg)`;
+  }
+
+  function render({galaxy, nodesLayer, activeLine, centerWord, candidates, onSelect}) {
+    if (!galaxy || !nodesLayer) return;
+    nodesLayer.innerHTML='';
+    if (activeLine) activeLine.hidden=true;
+
+    const rect=galaxy.getBoundingClientRect();
+    const points=computePositions(candidates, rect.width || 600, rect.height || 520);
+
+    points.forEach((p, i) => {
+      const c=p.candidate;
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='galaxy-node';
+      b.dataset.index=String(i);
+      b.style.left=`${p.x}px`;
+      b.style.top=`${p.y}px`;
+      const size=30 + c.similarity*34;
+      b.style.setProperty('--node-size',`${size}px`);
+      b.innerHTML=`<span>${escapeHTML(c.word)}</span>`;
+      b.title=`共通する性質：${c.sharedTraits.map(k=>D.TRAITS[k]?.label||k).join('・')}`;
+      b.addEventListener('click', () => {
+        nodesLayer.querySelectorAll('.galaxy-node').forEach(n => n.classList.remove('active'));
+        b.classList.add('active');
+        drawActiveLine(galaxy,b,activeLine);
+        onSelect?.(c);
+      });
+      nodesLayer.appendChild(b);
+    });
+
+    const core=galaxy.querySelector('.galaxy-core strong');
+    if (core) core.textContent=centerWord;
+  }
+
+  function escapeHTML(v) {
+    return String(v ?? '').replace(/[&<>"']/g,c=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  window.MW_GALAXY = { render, computePositions };
+})();
