@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="dark">
-  <title>意味ワームホール｜関係でたどる辞書</title>
+  <title>ことばの森｜関係でたどる辞書</title>
   <style>
 
 *{box-sizing:border-box}
@@ -101,12 +101,12 @@ h1 em{font-style:normal;color:var(--purple)}
 </head>
 <body>
 <main>
-  <header>意味ワームホール</header>
+  <header>ことばの森</header>
 
-  <h1>言葉を、<em>関係</em>でたどる。</h1>
+  <h1>ひとつの言葉から、<em>関係</em>が枝になる。</h1>
   <p class="lead">
-    意味だけじゃなく、用途・性質・動き・部分・反対まで。
-    辞書から関係を拾って、同じ性質を持つ言葉だけ銀河に並べます。
+    意味・種類・用途・性質・動き・部分・反対まで。
+    辞書に書かれた関係を枝のようにたどって、言葉がどこへ広がるかを見ます。
   </p>
 
   <section class="search-card">
@@ -132,7 +132,7 @@ h1 em{font-style:normal;color:var(--purple)}
     <p id="definition" class="definition"></p>
     <div id="sourceBadges" class="source-badges"></div>
 
-    <div class="block-title">この言葉の性質</div>
+    <div class="block-title">この言葉の性質 <small style="color:#817b8e;font-weight:400">（直接確認できたものだけ）</small></div>
     <div id="traits" class="trait-list"></div>
 
     <div class="block-title">関係をたどる</div>
@@ -142,17 +142,17 @@ h1 em{font-style:normal;color:var(--purple)}
   <section id="galaxyCard" class="galaxy-card" hidden>
     <div class="galaxy-head">
       <div>
-        <div class="section-kicker">WORD GALAXY</div>
-        <h2>同じ性質の言葉</h2>
+        <div class="section-kicker">WORD FOREST</div>
+        <h2>性質でつながる枝</h2>
       </div>
-      <p><span id="galaxyCount"></span> · 性質が近いほど中央に近い</p>
+      <p><span id="galaxyCount"></span> · 共通する性質が多いほど幹に近い</p>
     </div>
     <div id="galaxy" class="galaxy">
       <div id="activeLine" class="active-line" hidden></div>
       <div class="galaxy-core"><strong>—</strong></div>
       <div id="nodesLayer"></div>
       <div id="emptyGalaxy" class="empty-galaxy" hidden>
-        共通する性質がある言葉だけ表示します。
+        共通する性質がある言葉だけ、枝として表示します。
       </div>
     </div>
   </section>
@@ -172,13 +172,17 @@ h1 em{font-style:normal;color:var(--purple)}
 
 
 <script>
-// Meaning Wormhole dictionary data
+// Kotoba Forest dictionary data
 // 179 curated seed words + trait patterns.
 // This file is intentionally local so the app still works when external dictionaries are slow.
 
 const TRAITS={
  simulate:{label:'頭の中で体験する',bridge:'「実際には今ここで起きていない場面を、頭の中で体験する」',re:/夢|想像|空想|映画|物語|シミュレーション/},
  aspire:{label:'未来を目指す',bridge:'「まだ実現していない未来の状態を思い描き、そこへ向かう」',re:/目標|願望|将来|夢|計画|理想/},
+ move:{label:'移動する',bridge:'「自分の位置を変えて、別の場所へ移る」',re:/移動|歩く|走る|飛ぶ|泳ぐ|動き回る|移る/},
+ eat:{label:'食べる',bridge:'「外から食べ物を取り込み、活動のもとにする」',re:/食べる|捕食|摂食|餌を食べる|餌とする/},
+ hunt:{label:'獲物を捕らえる',bridge:'「対象を探して追い、捕らえる」',re:/狩る|狩猟|捕らえる|獲物を捕る|捕食する/},
+ hide:{label:'身を隠す',bridge:'「見つかりにくい場所や状態へ移って身を守る」',re:/隠れる|身を隠す|潜む|擬態/},
  openclose:{label:'開く・閉じる',bridge:'「必要なときに開いて、中のものを使い、終わったら閉じる」',re:/開閉|開く|閉じる|蓋|ふた|ファスナー|チャック|折りたた|折り畳|展開|収束|扇子|傘|蛇腹|筆箱|筆入れ|財布|鞄|かばん|ケース|箱/},
  portable:{label:'持ち運ぶ',bridge:'「使う場所まで持ち運び、必要なときだけ取り出す」',re:/携帯|持ち運|持参|可搬|ポータブル|手持ち|扇子|傘|カメラ|筆箱|筆入れ|財布|鞄|かばん|バッグ|ポーチ|ケース/},
  cover:{label:'覆う',bridge:'「広げた面で、何かを覆ったり遮ったりする」',re:/覆う|覆い|遮る|遮断|日除け|日よけ|雨除け|傘|屋根|皮膚/},
@@ -642,7 +646,7 @@ window.MW_DATA = {
 })();
 
 
-// Dictionary engine: merge sources, infer traits, build relation dictionary and galaxy candidates.
+// Dictionary engine: merge sources, infer strict traits, build relation dictionary and forest candidates.
 
 (() => {
   const D = window.MW_DATA;
@@ -719,7 +723,11 @@ window.MW_DATA = {
     { re:/(規則|ルール|決まり|プロトコル|規範)/, traits:['rule','followrule'] },
     { re:/(違反|逸脱|失礼|例外|エラー)/, traits:['deviate'] },
     { re:/(想像|夢|映画|仮想|シミュレーション|物語)/, traits:['simulate'] },
-    { re:/(目標|理想|願い|将来|目指す)/, traits:['aspire'] }
+    { re:/(目標|理想|願い|将来|目指す)/, traits:['aspire'] },
+    { re:/(移動|歩く|走る|飛ぶ|泳ぐ|動き回る|移る)/, traits:['move'] },
+    { re:/(食べる|捕食|摂食|餌を食べる|餌とする)/, traits:['eat'] },
+    { re:/(狩る|狩猟|捕らえる|獲物を捕る|捕食する)/, traits:['hunt'] },
+    { re:/(隠れる|身を隠す|潜む|擬態)/, traits:['hide'] }
   ];
 
   function unique(arr) { return [...new Set((arr || []).filter(Boolean))]; }
@@ -749,23 +757,70 @@ window.MW_DATA = {
     return fallback;
   }
 
-  function inferTraits(text) {
+  function inferTraits(text, useHints=true) {
     const z = String(text || '');
     const out = [];
     for (const [key, trait] of Object.entries(D.TRAITS)) {
-      try { if (trait.re && trait.re.test(z)) out.push(key); }
-      catch {}
+      try {
+        if (trait.re) { trait.re.lastIndex = 0; if (trait.re.test(z)) out.push(key); }
+      } catch {}
     }
-    for (const hint of HINTS) if (hint.re.test(z)) out.push(...hint.traits);
+    if (useHints) {
+      for (const hint of HINTS) {
+        try { hint.re.lastIndex = 0; if (hint.re.test(z)) out.push(...hint.traits); } catch {}
+      }
+    }
     return unique(out);
   }
 
+  const DIRECT_TRAIT_RELATIONS = new Set(['usedFor','property','capableOf','action']);
+
+  function compactDefinitionText(wiktionary) {
+    const defs = (wiktionary?.definitions || []).slice(0, 2);
+    return defs.join(' ').replace(/\s+/g,' ').slice(0, 420);
+  }
+
+  function directTraitEvidence(relations) {
+    const traitMap = new Map();
+    for (const r of relations || []) {
+      if (!DIRECT_TRAIT_RELATIONS.has(r.type)) continue;
+      const text = `${r.word || ''} ${r.evidence || ''}`.trim();
+      const found = inferTraits(text, false);
+      for (const t of found) {
+        if (!traitMap.has(t)) traitMap.set(t, []);
+        traitMap.get(t).push({source:sourceLabel(r), type:r.type, text:text.slice(0,140)});
+      }
+    }
+    return traitMap;
+  }
+
+  function traitsFromDirectSources({local=null,sense=null,wiktionary=null,conceptRelations=[]}={}) {
+    const evidence = new Map();
+    const add = (trait, source, text='') => {
+      if (!trait) return;
+      if (!evidence.has(trait)) evidence.set(trait, []);
+      evidence.get(trait).push({source,text});
+    };
+
+    for (const t of local?.tr || []) add(t,'ローカル性質辞典','手動で確認済み');
+    for (const t of sense?.traits || []) add(t,'語義設定',sense?.label || '');
+
+    const cn = directTraitEvidence(conceptRelations);
+    for (const [t, rows] of cn) for (const row of rows) add(t,row.source,row.text);
+
+    const directDef = compactDefinitionText(wiktionary);
+    for (const t of inferTraits(directDef, false)) add(t,'Wiktionary 定義',directDef);
+
+    let traits = [...evidence.keys()].sort((a,b) => traitWeight(b)-traitWeight(a));
+    if (local) traits = unique([...(local.tr || []), ...traits]).slice(0,10);
+    else traits = traits.slice(0,7);
+    return {traits, evidence, directDefinition:directDef};
+  }
+
   function relationEvidenceText(relations) {
-    return (relations || []).map(r => {
-      const type = r.type || '';
-      if (!['usedFor','property','capableOf','action','madeOf','createdBy','broader','narrower','synonym','similar'].includes(type)) return '';
-      return `${r.word} ${r.evidence || ''}`;
-    }).join(' ');
+    return (relations || []).filter(r => DIRECT_TRAIT_RELATIONS.has(r.type)).map(r =>
+      `${r.word || ''} ${r.evidence || ''}`
+    ).join(' ');
   }
 
   function traitWeight(key) { return D.TRAIT_WEIGHTS[key] || 7; }
@@ -830,55 +885,37 @@ window.MW_DATA = {
       ...(sources.wiktionary?.links || []).slice(0,28).map(x => relationFromWiktionary(x)),
       ...(sources.wiktionary?.search || []).slice(0,18).map(x => relationFromWiktionary(x))
     ].filter(Boolean);
-
     const relations = dedupeRelations([...conceptRelations, ...wiktRelations]);
 
-    const definitionParts = [
-      ...(sources.wiktionary?.definitions || []),
-      sources.wikipedia?.intro || ''
-    ].filter(Boolean);
-    const definition = definitionParts[0] || sources.wiktionary?.rawText?.slice(0,300) || '';
+    const strict = traitsFromDirectSources({
+      local, sense, wiktionary:sources.wiktionary, conceptRelations
+    });
+    const traits = strict.traits;
 
-    const evidenceText = [
-      w,
-      sources.wiktionary?.rawText || '',
-      sources.wikipedia?.intro || '',
-      relationEvidenceText(conceptRelations)
+    const definition = strict.directDefinition
+      || sources.wikipedia?.intro?.replace(/\s+/g,' ').slice(0,360)
+      || '';
+
+    const classText = [
+      w, strict.directDefinition, sources.wikipedia?.intro || '',
+      conceptRelations.filter(r => ['broader','narrower'].includes(r.type)).map(r=>r.word).join(' ')
     ].join(' ');
-
-    let traits = unique([
-      ...(local?.tr || []),
-      ...(sense?.traits || []),
-      ...inferTraits(evidenceText)
-    ]);
-
-    // A tiny guard: don't let generic dictionary boilerplate flood a word with every trait.
-    if (local) {
-      const localSet = new Set(local.tr || []);
-      const extra = traits.filter(t => localSet.has(t) || traitWeight(t) >= 10);
-      traits = unique([...(local.tr || []), ...extra]).slice(0,10);
-    } else {
-      traits = traits.sort((a,b) => traitWeight(b)-traitWeight(a)).slice(0,9);
-    }
-
-    const domain = sense?.domain || local?.d || inferDomain(evidenceText, 'その他');
+    const domain = sense?.domain || local?.d || inferDomain(classText, 'その他');
 
     const sourceBadges = [];
     if (local) sourceBadges.push('ローカル性質辞典');
     if (sources.wiktionary?.found) sourceBadges.push('Wiktionary');
-    if (sources.wikipedia?.found) sourceBadges.push('Wikipedia');
+    if (sources.wikipedia?.found) sourceBadges.push('Wikipedia（意味補助のみ）');
     if (conceptRelations.length || (sources.conceptnet?.relatedTerms || []).length) sourceBadges.push('ConceptNet');
     if (conceptRelations.some(r => r.source === 'WordNet via ConceptNet')) sourceBadges.push('WordNet');
 
     return {
-      word:w, displayWord:w, domain, traits, definition,
+      word:w, displayWord:w, domain, traits, definition, traitEvidence:strict.evidence,
       definitions:sources.wiktionary?.definitions || [],
-      relations,
-      relatedTerms:sources.conceptnet?.relatedTerms || [],
+      relations, relatedTerms:sources.conceptnet?.relatedTerms || [],
       wiktionaryLinks:sources.wiktionary?.links || [],
       wiktionarySearch:sources.wiktionary?.search || [],
-      sources:unique(sourceBadges),
-      raw:sources
+      sources:unique(sourceBadges), raw:sources
     };
   }
 
@@ -932,67 +969,67 @@ window.MW_DATA = {
   async function buildGalaxyCandidates(profile, onProgress=()=>{}) {
     const pool = poolFromProfile(profile);
 
-    // Unknown candidates get descriptions in batches, not one request per word.
     const unknown = pool
       .filter(x => !localWord(x.word))
       .sort((a,b) => (b.dictionaryScore+b.relatedWeight) - (a.dictionaryScore+a.relatedWeight))
-      .slice(0,64);
-    onProgress(`辞書から${unknown.length}語の意味をまとめて確認中…`);
-    const introMap = await P.getWikipediaIntros(unknown.map(x => x.word));
+      .slice(0,22);
+
+    const externalProfiles = new Map();
+    if (unknown.length) onProgress(`辞書から${unknown.length}語の「直接わかる性質」だけ確認中…`);
+
+    let cursor = 0;
+    const workers = Array.from({length:Math.min(5,unknown.length)}, async () => {
+      while (cursor < unknown.length) {
+        const item = unknown[cursor++];
+        try {
+          const [wikt, cn] = await Promise.all([
+            P.getWiktionary(item.word).catch(()=>({found:false,definitions:[]})),
+            P.getConceptNet(item.word).catch(()=>({relations:[],relatedTerms:[]}))
+          ]);
+          const strict = traitsFromDirectSources({wiktionary:wikt, conceptRelations:cn.relations || []});
+          const def = strict.directDefinition || '';
+          const classText = [item.word, def,
+            (cn.relations||[]).filter(r=>['broader','narrower'].includes(r.type)).map(r=>r.word).join(' ')
+          ].join(' ');
+          externalProfiles.set(item.word,{
+            traits:strict.traits, traitEvidence:strict.evidence,
+            domain:inferDomain(classText,'その他'), definition:def
+          });
+        } catch {}
+      }
+    });
+    await Promise.all(workers);
 
     const candidates = [];
     for (const item of pool) {
       const local = localWord(item.word);
-      let traits = local?.tr ? [...local.tr] : [];
-      let domain = local?.d || 'その他';
-      let intro = '';
-
-      if (!local) {
-        const info = introMap.get(item.word);
-        intro = info?.intro || '';
-        const relationText = (item.directRelations || [])
-          .map(r => `${r.word} ${r.evidence || ''}`).join(' ');
-        traits = inferTraits(`${item.word} ${intro} ${relationText}`);
-        domain = inferDomain(`${item.word} ${intro}`, 'その他');
-
-        // Synonyms / very close concepts can inherit the source's stable traits.
-        const strongest = (item.directRelations || []).reduce((m,r) =>
-          Math.max(m, DIRECT_RELATION_STRENGTH[r.type] || 0), 0);
-        const hasSynonym = (item.directRelations || []).some(r => ['synonym','similar'].includes(r.type));
-        if (hasSynonym && strongest >= .9) {
-          traits = unique([...traits, ...profile.traits]);
-        }
-      }
+      const ext = externalProfiles.get(item.word);
+      const traits = local?.tr ? [...local.tr] : (ext?.traits || []);
+      const domain = local?.d || ext?.domain || 'その他';
+      const intro = ext?.definition || '';
 
       const overlap = weightedOverlap(profile.traits, traits);
-      if (!overlap.shared.length) continue; // Explicit product rule: no shared trait = no galaxy node.
+      if (!overlap.shared.length) continue;
 
       const directStrength = (item.directRelations || []).reduce((m,r) =>
         Math.max(m, DIRECT_RELATION_STRENGTH[r.type] || 0), 0);
       const semantic = Math.max(0, Math.min(1, item.relatedWeight || 0));
-      // Distance is mainly property overlap. Other dictionaries only nudge it.
-      const similarity = Math.min(1,
-        overlap.score * .82 +
-        semantic * .12 +
-        directStrength * .06
-      );
+      const similarity = Math.min(1, overlap.score * .86 + semantic * .10 + directStrength * .04);
 
       candidates.push({
         word:item.word, domain, traits, sharedTraits:overlap.shared,
         similarity, coverage:overlap.coverage, jaccard:overlap.jaccard,
         relatedWeight:semantic, directRelations:item.directRelations || [],
-        sources:unique(item.sourceHints),
-        definition:intro
+        sources:unique(item.sourceHints), definition:intro,
+        traitEvidence:local ? null : ext?.traitEvidence
       });
     }
 
-    // Stronger property match first; then semantic closeness.
     candidates.sort((a,b) =>
       b.similarity - a.similarity ||
       b.sharedTraits.length - a.sharedTraits.length ||
       a.word.localeCompare(b.word,'ja')
     );
-
     return candidates;
   }
 
@@ -1037,7 +1074,7 @@ window.MW_DATA = {
     const shared = candidates.slice(0,18).map(x => ({
       word:x.word, type:'sharedTrait',
       label:x.sharedTraits.map(t => D.TRAITS[t]?.label || t).join('・'),
-      weight:x.similarity, source:'意味ワームホール'
+      weight:x.similarity, source:'ことばの森'
     }));
     groups.splice(4, 0, {id:'shared', label:'同じ性質', types:['sharedTrait'], items:shared});
 
@@ -1061,7 +1098,7 @@ window.MW_DATA = {
 })();
 
 
-// Galaxy renderer. Distance from center is driven primarily by shared-trait similarity.
+// Forest map renderer. Distance from the trunk is driven primarily by shared-trait similarity.
 
 (() => {
   const D = window.MW_DATA;
@@ -1372,7 +1409,7 @@ window.MW_DATA = {
     renderDictionary(profile,[]);
     setVisible('#dictionaryCard',true);
 
-    setStatus(`性質 ${profile.traits.length}個。関連語を広げてる`,true);
+    setStatus(`直接確認できた性質 ${profile.traits.length}個。関係の枝を広げてる`,true);
     let candidates=[];
     try {
       candidates=await E.buildGalaxyCandidates(profile,msg=>{
@@ -1390,8 +1427,8 @@ window.MW_DATA = {
     const external = candidates.filter(c=>!E.localWord(c.word)).length;
     setStatus(
       candidates.length
-        ? `${candidates.length}語を銀河に配置。共通する性質が0個の言葉は表示してへんで。${external?` 辞書由来 +${external}語。`:''}`
-        : '共通する性質を持つ言葉がまだ見つからへんかった。辞書の関係語は下に残してあるで。'
+        ? `${candidates.length}語の枝を表示。共通する性質が0個の言葉は図に入れてへんで。${external?` 辞書由来 +${external}語。`:''}`
+        : '直接確認できた共通性質の枝はまだ見つからへんかった。辞書の関係語は上の「関係をたどる」に残してあるで。'
     );
   }
 
@@ -1407,8 +1444,12 @@ window.MW_DATA = {
       .map(s=>`<span class="badge">${esc(s)}</span>`).join('');
 
     $('#traits').innerHTML=(profile.traits||[]).length
-      ? profile.traits.map(t=>`<span class="trait">${esc(D.TRAITS[t]?.label||t)}</span>`).join('')
-      : '<span class="badge">性質はまだ判定できてへん</span>';
+      ? profile.traits.map(t=>{
+          const ev=profile.traitEvidence?.get?.(t) || [];
+          const src=[...new Set(ev.map(x=>x.source).filter(Boolean))].join(' / ');
+          return `<span class="trait"${src?` title="確認元: ${esc(src)}"`:''}>${esc(D.TRAITS[t]?.label||t)}</span>`;
+        }).join('')
+      : '<span class="badge">直接確認できる性質はまだ見つかってへん</span>';
 
     const groups=E.dictionaryGroups(profile,candidates);
     const box=$('#relationGroups');
